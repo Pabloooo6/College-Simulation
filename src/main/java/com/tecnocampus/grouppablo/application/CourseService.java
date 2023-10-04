@@ -9,7 +9,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,31 +31,29 @@ public class CourseService {
     }
 
     @Transactional
-    public Course updateCourse(CourseDTO courseDTO, Long id){
+    public void updateCourse(CourseDTO courseDTO, Long id){
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> new CourseNotFound(id));
 
         course.setTitle(courseDTO.getTitle());
         course.setDescription(courseDTO.getDescription());
         course.setImageUrl(courseDTO.getImageUrl());
-
-        //return para verlo en el postman que se ha update bien
-        return courseRepository.findById(id).orElseThrow(() -> new CourseNotFound(id));
     }
 
     @Transactional
     public void updatePrice(CourseDTO courseDTO, Long id){
-
-
-        Course course = new Course(courseDTO);
+        Course course = courseRepository.findById(id)
+                .orElseThrow(() -> new CourseNotFound(id));
+        
+        course.setCurrentPrice(courseDTO.getCurrentPrice());
     }
 
     @Transactional
     public void updateAvailability(CourseDTO courseDTO, Long id){
+        Course course = courseRepository.findById(id)
+            .orElseThrow(() -> new CourseNotFound(id));
 
-
-
-        Course course = new Course(courseDTO);
+        course.setAvailability(courseDTO.getAvailability());
     }
 
 }

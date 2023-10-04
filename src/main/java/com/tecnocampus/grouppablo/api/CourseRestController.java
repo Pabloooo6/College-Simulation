@@ -2,7 +2,6 @@ package com.tecnocampus.grouppablo.api;
 
 import com.tecnocampus.grouppablo.application.CourseService;
 import com.tecnocampus.grouppablo.application.dto.CourseDTO;
-import com.tecnocampus.grouppablo.domain.Course;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -29,9 +28,8 @@ public class CourseRestController {
     }
 
     @PutMapping("/courses/{id}")
-    public Course updateCourse(@RequestBody CourseDTO courseDTO, @PathVariable Long id){
-        //return para verlo en el postman que se ha update bien
-        return courseService.updateCourse(courseDTO, id);
+    public void updateCourse(@RequestBody CourseDTO courseDTO, @PathVariable Long id){
+        courseService.updateCourse(courseDTO, id);
     }
 
     @PatchMapping("/courses/{id}/price")
