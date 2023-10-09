@@ -5,11 +5,12 @@ import com.tecnocampus.grouppablo.application.exception.CourseNotFound;
 import com.tecnocampus.grouppablo.domain.Course;
 import com.tecnocampus.grouppablo.persistence.CourseRepository;
 import jakarta.validation.Valid;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.List;
 import java.util.stream.Collectors;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.UUID;
 
 @Service
 public class CourseService {
@@ -22,38 +23,44 @@ public class CourseService {
 
     public CourseDTO addCourse(@Valid CourseDTO courseDTO) {
         Course course = new Course(courseDTO);
+        UUID id = UUID.randomUUID();
+        course.setId(id);
         courseRepository.save(course);
+        courseDTO.setId(id);
         return courseDTO;
     }
 
-    public List<CourseDTO> getAllCourses(){
-        return courseRepository.findAll(Sort.by(Sort.Direction.ASC, "title")).stream().filter(Course::getAvailability).map(CourseDTO::new).collect(Collectors.toList());
+    public List<CourseDTO> getAllCourses() {
+        return courseRepository.findByAvailabilityTrueOrderByTitle().stream().map(CourseDTO::new).collect(Collectors.toList());
     }
 
     @Transactional
-    public void updateCourse(CourseDTO courseDTO, Long id){
+    public void updateCourse(CourseDTO courseDTO, UUID id){
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> new CourseNotFound(id));
 
         course.setTitle(courseDTO.getTitle());
         course.setDescription(courseDTO.getDescription());
         course.setImageUrl(courseDTO.getImageUrl());
+        course.setLastUpdate(LocalDate.now());
     }
 
     @Transactional
-    public void updatePrice(CourseDTO courseDTO, Long id){
+    public void updatePrice(CourseDTO courseDTO, UUID id){
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> new CourseNotFound(id));
         
         course.setCurrentPrice(courseDTO.getCurrentPrice());
+        course.setLastUpdate(LocalDate.now());
     }
 
     @Transactional
-    public void updateAvailability(CourseDTO courseDTO, Long id){
+    public void updateAvailability(CourseDTO courseDTO, UUID id){
         Course course = courseRepository.findById(id)
             .orElseThrow(() -> new CourseNotFound(id));
 
         course.setAvailability(courseDTO.getAvailability());
+        course.setLastUpdate(LocalDate.now());
     }
 
 }
