@@ -6,7 +6,6 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 public class CourseRestController {
@@ -28,18 +27,21 @@ public class CourseRestController {
         return courseService.getAllCourses();
     }
 
+    @GetMapping("/courses/{id}")
+    public CourseDTO getCourse(@PathVariable String id) { return courseService.getCourse(id); }
+
     @PutMapping("/courses/{id}")
-    public void updateCourse(@RequestBody CourseDTO courseDTO, @PathVariable UUID id){
+    public void updateCourse(@RequestBody CourseDTO courseDTO, @PathVariable String id){
         courseService.updateCourse(courseDTO, id);
     }
 
     @PatchMapping("/courses/{id}/price")
-    public void updatePrice(@RequestBody CourseDTO courseDTO, @PathVariable UUID id){
+    public void updatePrice(@RequestBody CourseDTO courseDTO, @PathVariable String id){
         courseService.updatePrice(courseDTO, id);
     }
 
     @PatchMapping("/courses/{id}/availability")
-    public void updateAvailability(@RequestBody CourseDTO courseDTO, @PathVariable UUID id){
+    public void updateAvailability(@RequestBody CourseDTO courseDTO, @PathVariable String id){
         courseService.updateAvailability(courseDTO, id);
     }
 }

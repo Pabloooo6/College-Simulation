@@ -2,6 +2,7 @@ package com.tecnocampus.grouppablo.application;
 
 import com.tecnocampus.grouppablo.application.dto.CourseDTO;
 import com.tecnocampus.grouppablo.application.exception.CourseNotFound;
+import com.tecnocampus.grouppablo.application.exception.CourseAlreadyExists;
 import com.tecnocampus.grouppablo.domain.Course;
 import com.tecnocampus.grouppablo.persistence.CourseRepository;
 import jakarta.validation.Valid;
@@ -22,9 +23,11 @@ public class CourseService {
     }
 
     public CourseDTO addCourse(@Valid CourseDTO courseDTO) {
+        if(courseRepository.findByTitle(courseDTO.getTitle()).isPresent()) throw new CourseAlreadyExists(courseDTO.getTitle());
         Course course = new Course(courseDTO);
-        UUID id = UUID.randomUUID();
+        String id = UUID.randomUUID().toString();
         course.setId(id);
+        course.setPublication(LocalDate.now());
         courseRepository.save(course);
         courseDTO.setId(id);
         return courseDTO;
@@ -34,8 +37,14 @@ public class CourseService {
         return courseRepository.findByAvailabilityTrueOrderByTitle().stream().map(CourseDTO::new).collect(Collectors.toList());
     }
 
+    public CourseDTO getCourse(String id){
+        Course course = courseRepository.findById(id)
+                .orElseThrow(() -> new CourseNotFound(id));
+        return new CourseDTO(course);
+    }
+
     @Transactional
-    public void updateCourse(CourseDTO courseDTO, UUID id){
+    public void updateCourse(CourseDTO courseDTO, String id){
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> new CourseNotFound(id));
 
@@ -46,7 +55,7 @@ public class CourseService {
     }
 
     @Transactional
-    public void updatePrice(CourseDTO courseDTO, UUID id){
+    public void updatePrice(CourseDTO courseDTO, String id){
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> new CourseNotFound(id));
         
@@ -55,7 +64,7 @@ public class CourseService {
     }
 
     @Transactional
-    public void updateAvailability(CourseDTO courseDTO, UUID id){
+    public void updateAvailability(CourseDTO courseDTO, String id){
         Course course = courseRepository.findById(id)
             .orElseThrow(() -> new CourseNotFound(id));
 
