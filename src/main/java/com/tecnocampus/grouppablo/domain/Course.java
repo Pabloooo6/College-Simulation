@@ -2,6 +2,8 @@ package com.tecnocampus.grouppablo.domain;
 
 import com.tecnocampus.grouppablo.application.dto.CourseDTO;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+
 import java.time.LocalDate;
 
 @Entity
@@ -16,6 +18,8 @@ public class Course {
     private LocalDate publication;
     private LocalDate lastUpdate;
     private String imageUrl;
+    @Column(name = "currentPrice")
+    @Min(value = 0, message = "The price can not be negative.")
     private double currentPrice;
     private boolean availability;
 

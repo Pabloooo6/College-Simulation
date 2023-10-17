@@ -1,6 +1,8 @@
 package com.tecnocampus.grouppablo.application.dto;
 
 import com.tecnocampus.grouppablo.domain.Course;
+import jakarta.persistence.Column;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Pattern;
 
 import java.io.Serializable;

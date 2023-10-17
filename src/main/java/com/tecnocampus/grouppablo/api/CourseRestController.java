@@ -31,17 +31,17 @@ public class CourseRestController {
     public CourseDTO getCourse(@PathVariable String id) { return courseService.getCourse(id); }
 
     @PutMapping("/courses/{id}")
-    public void updateCourse(@RequestBody CourseDTO courseDTO, @PathVariable String id){
-        courseService.updateCourse(courseDTO, id);
+    public CourseDTO updateCourse(@RequestBody CourseDTO courseDTO, @PathVariable String id){
+        return courseService.updateCourse(courseDTO, id);
     }
 
     @PatchMapping("/courses/{id}/price")
-    public void updatePrice(@RequestBody CourseDTO courseDTO, @PathVariable String id){
-        courseService.updatePrice(courseDTO, id);
+    public CourseDTO updatePrice(@RequestBody CourseDTO courseDTO, @PathVariable String id){
+        return courseService.updatePrice(courseDTO, id);
     }
 
     @PatchMapping("/courses/{id}/availability")
-    public void updateAvailability(@RequestBody CourseDTO courseDTO, @PathVariable String id){
-        courseService.updateAvailability(courseDTO, id);
+    public CourseDTO updateAvailability(@RequestBody CourseDTO courseDTO, @PathVariable String id){
+        return courseService.updateAvailability(courseDTO, id);
     }
 }

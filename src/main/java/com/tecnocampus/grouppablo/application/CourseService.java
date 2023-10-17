@@ -44,7 +44,7 @@ public class CourseService {
     }
 
     @Transactional
-    public void updateCourse(CourseDTO courseDTO, String id){
+    public CourseDTO updateCourse(CourseDTO courseDTO, String id){
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> new CourseNotFound(id));
 
@@ -52,24 +52,27 @@ public class CourseService {
         course.setDescription(courseDTO.getDescription());
         course.setImageUrl(courseDTO.getImageUrl());
         course.setLastUpdate(LocalDate.now());
+        return new CourseDTO(course);
     }
 
     @Transactional
-    public void updatePrice(CourseDTO courseDTO, String id){
+    public CourseDTO updatePrice(CourseDTO courseDTO, String id){
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> new CourseNotFound(id));
         
         course.setCurrentPrice(courseDTO.getCurrentPrice());
         course.setLastUpdate(LocalDate.now());
+        return new CourseDTO(course);
     }
 
     @Transactional
-    public void updateAvailability(CourseDTO courseDTO, String id){
+    public CourseDTO updateAvailability(CourseDTO courseDTO, String id){
         Course course = courseRepository.findById(id)
             .orElseThrow(() -> new CourseNotFound(id));
 
         course.setAvailability(courseDTO.getAvailability());
         course.setLastUpdate(LocalDate.now());
+        return new CourseDTO(course);
     }
 
 }
