@@ -2,25 +2,30 @@ package com.tecnocampus.grouppablo.domain;
 
 import com.tecnocampus.grouppablo.application.dto.CourseDTO;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+
 import java.time.LocalDate;
-import java.util.UUID;
 
 @Entity
 @Table(name = "course")
 public class Course {
 
     @Id
-    private UUID id;
+    private String id;
+    @Column(name = "title", unique = true)
     private String title;
     private String description;
     private LocalDate publication;
     private LocalDate lastUpdate;
     private String imageUrl;
+    @Column(name = "currentPrice")
+    @Min(value = 0, message = "The price can not be negative.")
     private double currentPrice;
     private boolean availability;
 
     public Course() {
         this.publication = LocalDate.now();
+        this.lastUpdate = LocalDate.now();
         this.availability = false;
     }
 
@@ -34,8 +39,8 @@ public class Course {
         this.availability = courseDTO.getAvailability();
     }
 
-    public void setId(UUID id){this.id = id;}
-    public UUID getId() {return id;}
+    public void setId(String id){this.id = id;}
+    public String getId() {return id;}
 
     public void setTitle(String title){this.title = title;}
     public String getTitle(){return this.title;}
