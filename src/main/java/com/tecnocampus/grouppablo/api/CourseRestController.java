@@ -30,6 +30,11 @@ public class CourseRestController {
     @GetMapping("/courses/{id}")
     public CourseDTO getCourse(@PathVariable String id) { return courseService.getCourse(id); }
 
+    @GetMapping("/courses/search")
+    public List<CourseDTO> getCoursesTitleOrDescription(@RequestParam String titleOrDescription) {
+        return courseService.getCoursesTitleOrDescription(titleOrDescription);
+    }
+
     @PutMapping("/courses/{id}")
     public CourseDTO updateCourse(@RequestBody CourseDTO courseDTO, @PathVariable String id){
         return courseService.updateCourse(courseDTO, id);

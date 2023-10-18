@@ -43,6 +43,10 @@ public class CourseService {
         return new CourseDTO(course);
     }
 
+    public List<CourseDTO> getCoursesTitleOrDescription(String search) {
+        return courseRepository.findCoursesByTitleOrDescription(search);
+    }
+
     @Transactional
     public CourseDTO updateCourse(CourseDTO courseDTO, String id){
         Course course = courseRepository.findById(id)
@@ -74,5 +78,4 @@ public class CourseService {
         course.setLastUpdate(LocalDate.now());
         return new CourseDTO(course);
     }
-
 }

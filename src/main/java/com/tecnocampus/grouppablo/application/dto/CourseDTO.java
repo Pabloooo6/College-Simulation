@@ -45,6 +45,11 @@ public class CourseDTO implements Serializable {
         this.availability = course.getAvailability();
     }
 
+    public CourseDTO(String title, String description) {
+        this.title = title;
+        this.description = description;
+    }
+
     public String getId(){return this.id;}
     public void setId(String id){this.id = id;}
 
