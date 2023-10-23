@@ -12,3 +12,17 @@ VALUES ('fff6e217-7851-4d8d-8cc7-73290d0f96ed', 'Marketing Digital', 'Aprende es
 
 INSERT INTO course (id, title, description, publication, last_update, image_url, current_price, availability)
 VALUES ('c0805b8c-1f4c-45c7-9776-bbcf6e1a1a7d', 'Desarrollo Web Full Stack', 'Conviertete en un desarrollador web completo.', '2023-06-20', '2023-07-15', 'imagen5.jpg', 149.00, true);
+
+
+INSERT INTO user_lab (name, second_name, third_name, email, gender, username)
+VALUES
+    ('Juan', 'Pérez', 'Gómez', 'juan.perez@example.com', 'Masculino', 'usuario1'),
+    ('María', 'González', 'López', 'maria.gonzalez@example.com', 'Femenino', 'usuario2'),
+    ('Carlos', 'Sánchez', 'Martínez', 'carlos.sanchez@example.com', 'Masculino', 'usuario3'),
+    ('Isabel', 'Fernández', 'Rodríguez', 'isabel.fernandez@example.com', 'Femenino', 'usuario4'),
+    ('Manuel', 'López', 'Soto', 'manuel.lopez@example.com', 'Masculino', 'usuario5'),
+    ('Laura', 'Ramírez', 'García', 'laura.ramirez@example.com', 'Femenino', 'usuario6'),
+    ('Pedro', 'Díaz', 'Torres', 'pedro.diaz@example.com', 'Masculino', 'usuario7'),
+    ('Carmen', 'Ruiz', 'Fernández', 'carmen.ruiz@example.com', 'Femenino', 'usuario8'),
+    ('Antonio', 'Moreno', 'Sánchez', 'antonio.moreno@example.com', 'Masculino', 'usuario9'),
+    ('Sofía', 'Torres', 'López', 'sofia.torres@example.com', 'Femenino', 'usuario10');

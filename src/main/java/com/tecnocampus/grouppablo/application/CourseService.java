@@ -1,10 +1,14 @@
 package com.tecnocampus.grouppablo.application;
 
 import com.tecnocampus.grouppablo.application.dto.CourseDTO;
+import com.tecnocampus.grouppablo.application.dto.UserDTO;
 import com.tecnocampus.grouppablo.application.exception.CourseNotFound;
 import com.tecnocampus.grouppablo.application.exception.CourseAlreadyExists;
+import com.tecnocampus.grouppablo.application.exception.UserNotFound;
 import com.tecnocampus.grouppablo.domain.Course;
+import com.tecnocampus.grouppablo.domain.User;
 import com.tecnocampus.grouppablo.persistence.CourseRepository;
+import com.tecnocampus.grouppablo.persistence.UserRepository;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,10 +20,12 @@ import java.util.UUID;
 @Service
 public class CourseService {
 
-    CourseRepository courseRepository;
+    private final CourseRepository courseRepository;
+    private final UserRepository userRepository;
 
-    public CourseService(CourseRepository courseRepository){
+    public CourseService(CourseRepository courseRepository, UserRepository userRepository){
         this.courseRepository = courseRepository;
+        this.userRepository = userRepository;
     }
 
     public CourseDTO addCourse(@Valid CourseDTO courseDTO) {
@@ -77,5 +83,11 @@ public class CourseService {
         course.setAvailability(courseDTO.getAvailability());
         course.setLastUpdate(LocalDate.now());
         return new CourseDTO(course);
+    }
+
+    public UserDTO getUser(String username){
+        User user = userRepository.findById(username)
+                .orElseThrow(() -> new UserNotFound(username));
+        return new UserDTO(user);
     }
 }

@@ -2,6 +2,7 @@ package com.tecnocampus.grouppablo.api;
 
 import com.tecnocampus.grouppablo.application.CourseService;
 import com.tecnocampus.grouppablo.application.dto.CourseDTO;
+import com.tecnocampus.grouppablo.application.dto.UserDTO;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -49,4 +50,7 @@ public class CourseRestController {
     public CourseDTO updateAvailability(@RequestBody CourseDTO courseDTO, @PathVariable String id){
         return courseService.updateAvailability(courseDTO, id);
     }
+
+    @GetMapping("/users/{username}")
+    public UserDTO getUser(@PathVariable String username){return courseService.getUser(username);}
 }

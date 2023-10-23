@@ -2,7 +2,9 @@ package com.tecnocampus.grouppablo;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tecnocampus.grouppablo.application.dto.CourseDTO;
+import com.tecnocampus.grouppablo.application.dto.UserDTO;
 import com.tecnocampus.grouppablo.application.exception.CourseNotFound;
+import com.tecnocampus.grouppablo.application.exception.UserNotFound;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -261,4 +263,52 @@ class GroupPabloApplicationTests {
         assertThat(updatedCourse).isEqualToIgnoringWhitespace(
                 objectMapper.writeValueAsString(expectedCourse));
     }
+
+    @Test
+    @Order(12)
+    void testGetTitleOrDescription() throws Exception{
+        mockMvc.perform(get("/courses/search?titleOrDescription=Mar")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$", hasSize(1)))
+
+                .andExpect(jsonPath("$[*].title", contains("Marketing Digital")))
+                .andExpect(jsonPath("$[*].description", contains("Aprende estrategias efectivas de marketing en linea.")))
+                .andExpect(jsonPath("$[*].id", everyItem(is(nullValue()))))
+                .andExpect(jsonPath("$[*].publication", everyItem(is(nullValue()))))
+                .andExpect(jsonPath("$[*].lastUpdate", everyItem(is(nullValue()))))
+                .andExpect(jsonPath("$[*].imageUrl", everyItem(is(nullValue()))))
+                .andExpect(jsonPath("$[*].currentPrice",everyItem(is(0.0))))
+                .andExpect(jsonPath("$[*].availability", everyItem(is(false))));
+    }
+
+    @Test
+    @Order(13)
+    void testGetUser() throws Exception{
+        UserDTO expectedUser = new UserDTO("Juan", "Pérez", "Gómez",
+                "juan.perez@example.com", "Masculino", "usuario1");
+
+        MvcResult mvcResult = mockMvc.perform(get("/users/usuario1")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andReturn();
+
+        String actualResponseBody = mvcResult.getResponse().getContentAsString();
+        assertThat(actualResponseBody).isEqualToIgnoringWhitespace(
+                objectMapper.writeValueAsString(expectedUser));
+    }
+
+    @Test
+    @Order(14)
+    void testGetUserDoesNotExist() throws Exception{
+        mockMvc.perform(get("/users/usuario11")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof UserNotFound))
+                .andExpect(result -> assertEquals("User with username: usuario11 does not exist.", result.getResolvedException().getMessage()));
+    }
+
 }
