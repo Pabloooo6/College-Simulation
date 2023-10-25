@@ -62,8 +62,8 @@ class GroupPabloApplicationTests {
     void testGetCourseExists() throws Exception{
         LocalDate publication = LocalDate.of(2023, 2, 15);
         LocalDate lastUpdate = LocalDate.of(2023, 3, 10);
-        CourseDTO expectedCourse = new CourseDTO("Programacion en Python", "Aprende a programar en Python desde cero."
-                , publication, lastUpdate, "imagen1.jpg", 99.00, true);
+        CourseDTO expectedCourse = new CourseDTO("Programacion en Python", "Aprende a programar en Python desde cero.",
+                publication, lastUpdate, "imagen1.jpg", 99.00, true);
         expectedCourse.setId("4f4e501f-6350-48c9-9f8d-0a4b32b9a1a2");
 
         MvcResult mvcResult = mockMvc.perform(get("/courses/4f4e501f-6350-48c9-9f8d-0a4b32b9a1a2")

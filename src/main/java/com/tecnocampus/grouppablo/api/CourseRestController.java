@@ -1,6 +1,7 @@
 package com.tecnocampus.grouppablo.api;
 
 import com.tecnocampus.grouppablo.application.CourseService;
+import com.tecnocampus.grouppablo.application.dto.CategoryDTO;
 import com.tecnocampus.grouppablo.application.dto.CourseDTO;
 import com.tecnocampus.grouppablo.application.dto.UserDTO;
 import jakarta.validation.Valid;
@@ -31,7 +32,7 @@ public class CourseRestController {
     @GetMapping("/courses/{id}")
     public CourseDTO getCourse(@PathVariable String id) { return courseService.getCourse(id); }
 
-    @GetMapping("/courses/search")
+    @GetMapping("/courses/searchByTitleOrDescription")
     public List<CourseDTO> getCoursesTitleOrDescription(@RequestParam String titleOrDescription) {
         return courseService.getCoursesTitleOrDescription(titleOrDescription);
     }
@@ -53,4 +54,25 @@ public class CourseRestController {
 
     @GetMapping("/users/{username}")
     public UserDTO getUser(@PathVariable String username){return courseService.getUser(username);}
+
+    @GetMapping("/category")
+    public List<CategoryDTO> getCategories(){return courseService.getAllCategories();}
+
+    @PostMapping("/category")
+    @ResponseStatus(HttpStatus.CREATED)
+    public CategoryDTO addCategory(@RequestBody @Valid CategoryDTO categoryDTO){return courseService.addCategory(categoryDTO);}
+
+    @DeleteMapping("/category/{category}")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteCategory(@PathVariable String category){courseService.deleteCategory(category);}
+
+    @GetMapping("/courses/searchByCategoryOrLanguage")
+    public List<CourseDTO> getCoursesCategoryOrLanguage(@RequestParam List<String> categoryOrLanguage){
+        return courseService.getCoursesCategoryOrLanguage(categoryOrLanguage);
+    }
+
+    @GetMapping("/courses/searchByTeacher/{teacherName}")
+    public List<CourseDTO> getCoursesByTeacher(@PathVariable String teacherName){
+        return courseService.getCoursesByTeacher(teacherName);
+    }
 }

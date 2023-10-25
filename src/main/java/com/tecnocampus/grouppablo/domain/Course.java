@@ -3,7 +3,6 @@ package com.tecnocampus.grouppablo.domain;
 import com.tecnocampus.grouppablo.application.dto.CourseDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
-
 import java.time.LocalDate;
 
 @Entity
@@ -22,6 +21,11 @@ public class Course {
     @Min(value = 0, message = "The price can not be negative.")
     private double currentPrice;
     private boolean availability;
+    @ManyToOne
+    private Category category;
+    @ManyToOne
+    private Language language;
+    private String teacher;
 
     public Course() {
         this.publication = LocalDate.now();
@@ -37,6 +41,11 @@ public class Course {
         this.imageUrl = courseDTO.getImageUrl();
         this.currentPrice = courseDTO.getCurrentPrice();
         this.availability = courseDTO.getAvailability();
+        if(courseDTO.getCategory() == null) this.category = new Category("none");
+        else this.category = new Category(courseDTO.getCategory());
+        if(courseDTO.getLanguage() == null) this.language = new Language("none");
+        else this.language = new Language(courseDTO.getLanguage());
+        this.teacher = courseDTO.getTeacher();
     }
 
     public void setId(String id){this.id = id;}
@@ -63,4 +72,12 @@ public class Course {
     public void setAvailability(boolean availability){this.availability = availability;}
     public boolean getAvailability(){return this.availability;}
 
+    public void setCategory(Category category){this.category = category;}
+    public Category getCategory(){return this.category;}
+
+    public void setLanguage(Language language){this.language = language;}
+    public Language getLanguage(){return this.language;}
+
+    public void setTeacher(String teacher){this.teacher = teacher;}
+    public String getTeacher(){return this.teacher;}
 }

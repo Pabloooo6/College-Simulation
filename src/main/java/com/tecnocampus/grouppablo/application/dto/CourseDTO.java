@@ -1,10 +1,9 @@
 package com.tecnocampus.grouppablo.application.dto;
 
+import com.tecnocampus.grouppablo.domain.Category;
 import com.tecnocampus.grouppablo.domain.Course;
-import jakarta.persistence.Column;
-import jakarta.validation.constraints.Min;
+import com.tecnocampus.grouppablo.domain.Language;
 import jakarta.validation.constraints.Pattern;
-
 import java.io.Serializable;
 import java.time.LocalDate;
 
@@ -19,12 +18,35 @@ public class CourseDTO implements Serializable {
     private String imageUrl;
     private double currentPrice;
     private boolean availability;
+    private CategoryDTO categoryDTO;
+    private LanguageDTO languageDTO;
+    private String teacher;
 
     public CourseDTO(){
     }
 
-    public CourseDTO(String title, String description, LocalDate publication, LocalDate lastUpdate,
-                     String imageUrl, double currentPrice, boolean availability){
+    public CourseDTO(String title, String description, String imageUrl){
+        this.title = title;
+        this.description = description;
+        this.imageUrl = imageUrl;
+    }
+
+    public CourseDTO(String title, String description, LocalDate publication, LocalDate lastUpdate, String imageUrl,
+                     double currentPrice, boolean availability, Category category, Language language, String teacher){
+        this.title = title;
+        this.description = description;
+        this.publication = publication;
+        this.lastUpdate = lastUpdate;
+        this.imageUrl = imageUrl;
+        this.currentPrice = currentPrice;
+        this.availability = availability;
+        this.categoryDTO = new CategoryDTO(category);
+        this.languageDTO = new LanguageDTO(language);
+        this.teacher = teacher;
+    }
+
+    public CourseDTO(String title, String description, LocalDate publication, LocalDate lastUpdate, String imageUrl,
+                     double currentPrice, boolean availability){
         this.title = title;
         this.description = description;
         this.publication = publication;
@@ -43,6 +65,11 @@ public class CourseDTO implements Serializable {
         this.imageUrl = course.getImageUrl();
         this.currentPrice = course.getCurrentPrice();
         this.availability = course.getAvailability();
+        if(course.getCategory() == null) this.categoryDTO = new CategoryDTO("none");
+        else this.categoryDTO = new CategoryDTO(course.getCategory());
+        if(course.getLanguage() == null) this.languageDTO = new LanguageDTO("none");
+        else this.languageDTO = new LanguageDTO(course.getLanguage());
+        this.teacher = course.getTeacher();
     }
 
     public CourseDTO(String title, String description) {
@@ -74,4 +101,12 @@ public class CourseDTO implements Serializable {
     public boolean getAvailability(){return this.availability;}
     public void setAvailability(boolean availability){this.availability = availability;}
 
+    public void setCategory(CategoryDTO category){this.categoryDTO = category;}
+    public CategoryDTO getCategory(){return this.categoryDTO;}
+
+    public void setLanguage(LanguageDTO language){this.languageDTO = language;}
+    public LanguageDTO getLanguage(){return this.languageDTO;}
+
+    public void setTeacher(String teacher){this.teacher = teacher;}
+    public String getTeacher(){return this.teacher;}
 }

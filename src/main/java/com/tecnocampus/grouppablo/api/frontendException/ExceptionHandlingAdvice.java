@@ -1,5 +1,6 @@
 package com.tecnocampus.grouppablo.api.frontendException;
 
+import com.tecnocampus.grouppablo.application.exception.CategoryAlreadyExists;
 import com.tecnocampus.grouppablo.application.exception.CourseAlreadyExists;
 import com.tecnocampus.grouppablo.application.exception.CourseNotFound;
 import com.tecnocampus.grouppablo.application.exception.UserNotFound;
@@ -19,7 +20,7 @@ public class ExceptionHandlingAdvice {
         return ex.getMessage();
     }
 
-    @ExceptionHandler(CourseAlreadyExists.class)
+    @ExceptionHandler({CourseAlreadyExists.class, CategoryAlreadyExists.class})
     @ResponseBody
     @ResponseStatus(code = HttpStatus.CONFLICT, reason = "Duplicated title. Please choose another one.")
     String objectAlreadyExists(Exception exception) {
