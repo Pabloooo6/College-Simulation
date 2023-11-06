@@ -1,5 +1,6 @@
 package com.tecnocampus.grouppablo.domain;
 
+import com.tecnocampus.grouppablo.application.dto.UserDTO;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -28,6 +29,15 @@ public class User {
         this.email = email;
         this.gender = gender;
         this.username = username;
+    }
+
+    public User(UserDTO userDTO) {
+        this.name = userDTO.getName();
+        this.secondName = userDTO.getSecondName();
+        this.thirdName = userDTO.getThirdName();
+        this.email = userDTO.getEmail();
+        this.gender = userDTO.getGender();
+        this.username = userDTO.getUsername();
     }
 
     public void setUsername(String username){this.username = username;}

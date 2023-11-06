@@ -20,7 +20,7 @@ public class CourseDTO implements Serializable {
     private boolean availability;
     private CategoryDTO categoryDTO;
     private LanguageDTO languageDTO;
-    private String teacher;
+    private UserDTO teacher;
 
     public CourseDTO(){
     }
@@ -32,7 +32,7 @@ public class CourseDTO implements Serializable {
     }
 
     public CourseDTO(String title, String description, LocalDate publication, LocalDate lastUpdate, String imageUrl,
-                     double currentPrice, boolean availability, Category category, Language language, String teacher){
+                     double currentPrice, boolean availability, Category category, Language language, UserDTO teacher){
         this.title = title;
         this.description = description;
         this.publication = publication;
@@ -69,7 +69,7 @@ public class CourseDTO implements Serializable {
         else this.categoryDTO = new CategoryDTO(course.getCategory());
         if(course.getLanguage() == null) this.languageDTO = new LanguageDTO("none");
         else this.languageDTO = new LanguageDTO(course.getLanguage());
-        this.teacher = course.getTeacher();
+        this.teacher = new UserDTO(course.getTeacher());
     }
 
     public CourseDTO(String title, String description) {
@@ -107,6 +107,6 @@ public class CourseDTO implements Serializable {
     public void setLanguage(LanguageDTO language){this.languageDTO = language;}
     public LanguageDTO getLanguage(){return this.languageDTO;}
 
-    public void setTeacher(String teacher){this.teacher = teacher;}
-    public String getTeacher(){return this.teacher;}
+    public void setTeacher(UserDTO teacher){this.teacher = teacher;}
+    public UserDTO getTeacher(){return this.teacher;}
 }

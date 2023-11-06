@@ -15,15 +15,6 @@ public class UserDTO implements Serializable {
     public UserDTO(){
     }
 
-    public UserDTO(User user){
-        this.name = user.getName();
-        this.secondName = user.getSecondName();
-        this.thirdName = user.getThirdName();
-        this.email = user.getEmail();
-        this.gender = user.getGender();
-        this.username = user.getUsername();
-    }
-
     public UserDTO(String name, String secondName, String thirdName, String email, String gender, String username){
         this.name = name;
         this.secondName = secondName;
@@ -31,6 +22,15 @@ public class UserDTO implements Serializable {
         this.email = email;
         this.gender = gender;
         this.username = username;
+    }
+
+    public UserDTO(User user){
+        this.name = user.getName();
+        this.secondName = user.getSecondName();
+        this.thirdName = user.getThirdName();
+        this.email = user.getEmail();
+        this.gender = user.getGender();
+        this.username = user.getUsername();
     }
 
     public void setName(String name){this.name = name;}

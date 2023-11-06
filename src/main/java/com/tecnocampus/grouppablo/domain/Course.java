@@ -25,7 +25,9 @@ public class Course {
     private Category category;
     @ManyToOne
     private Language language;
-    private String teacher;
+    @ManyToOne
+    @JoinColumn(name = "teacher_id")
+    private User teacher;
 
     public Course() {
         this.publication = LocalDate.now();
@@ -45,7 +47,7 @@ public class Course {
         else this.category = new Category(courseDTO.getCategory());
         if(courseDTO.getLanguage() == null) this.language = new Language("none");
         else this.language = new Language(courseDTO.getLanguage());
-        this.teacher = courseDTO.getTeacher();
+        this.teacher = new User(courseDTO.getTeacher());
     }
 
     public void setId(String id){this.id = id;}
@@ -78,6 +80,6 @@ public class Course {
     public void setLanguage(Language language){this.language = language;}
     public Language getLanguage(){return this.language;}
 
-    public void setTeacher(String teacher){this.teacher = teacher;}
-    public String getTeacher(){return this.teacher;}
+    public void setTeacher(User teacher){this.teacher = teacher;}
+    public User getTeacher(){return this.teacher;}
 }
