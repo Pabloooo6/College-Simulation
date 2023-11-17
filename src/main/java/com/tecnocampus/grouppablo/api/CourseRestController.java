@@ -1,9 +1,7 @@
 package com.tecnocampus.grouppablo.api;
 
 import com.tecnocampus.grouppablo.application.CourseService;
-import com.tecnocampus.grouppablo.application.dto.CategoryDTO;
-import com.tecnocampus.grouppablo.application.dto.CourseDTO;
-import com.tecnocampus.grouppablo.application.dto.UserDTO;
+import com.tecnocampus.grouppablo.application.dto.*;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -74,5 +72,30 @@ public class CourseRestController {
     @GetMapping("/courses/searchByTeacher/{teacherName}")
     public List<CourseDTO> getCoursesByTeacher(@PathVariable String teacherName){
         return courseService.getCoursesByTeacher(teacherName);
+    }
+
+    @PostMapping("/courses/{id}/lessons")
+    public LessonDTO addLesson(@PathVariable String id, @RequestBody @Valid LessonDTO lessonDTO){
+        return this.courseService.addLesson(id, lessonDTO);
+    }
+
+    @PutMapping("/courses/{id}/lessons")
+    public List<LessonDTO> updateOrderOfLessons(@PathVariable String id, @RequestBody List<Integer> newOrder) throws Exception {
+        return this.courseService.updateOrderOfLessons(id, newOrder);
+    }
+
+    @PutMapping("/users/{id}/courses/{courseId}")
+    public EnrolDTO updateUserCourses(@PathVariable String id, @PathVariable String courseId){
+        return this.courseService.updateUserCourses(id, courseId);
+    }
+
+    @GetMapping("/users/{id}/courses/{courseId}")
+    public EnrolDTO getCourseByStudent(@PathVariable String id, @PathVariable String courseId){
+        return this.courseService.getCourseByStudent(id, courseId);
+    }
+
+    @PutMapping("/users/{id}/courses/{courseId}/lessons/{lesson}")
+    public EnrolDTO updateFinishedLesson(@PathVariable String id, @PathVariable String courseId, @PathVariable int lesson){
+        return this.courseService.updateFinishedLesson(id, courseId, lesson);
     }
 }

@@ -19,7 +19,7 @@ VALUES
     ('Sofía', 'Torres', 'López', 'sofia.torres@example.com', 'Femenino', 'usuario10');
 
 INSERT INTO course (id, title, description, publication, last_update, image_url, current_price, availability, category_category, language_language, teacher_id)
-VALUES ('4f4e501f-6350-48c9-9f8d-0a4b32b9a1a2', 'Programacion en Python', 'Aprende a programar en Python desde cero.', '2023-02-15', '2023-03-10', 'imagen1.jpg', 99.00, true, 'Programación', 'Español', 'usuario1');
+VALUES ('4f4e501f-6350-48c9-9f8d-0a4b32b9a1a2', 'Programacion en Python', 'Aprende a programar en Python desde cero.', '2023-02-15', '2023-03-10', 'imagen1.jpg', 99.00, false, 'Programación', 'Español', 'usuario1');
 INSERT INTO course (id, title, description, publication, last_update, image_url, current_price, availability, category_category, language_language, teacher_id)
 VALUES ('d53b6f99-7f60-4a53-b801-6e4aa190bdcf', 'Introduccion a la IA', 'Descubre los conceptos basicos de la Inteligencia Artificial.', '2023-03-10', '2023-04-05', 'imagen2.jpg', 79.00, true, 'Programación', 'Català', 'usuario1');
 INSERT INTO course (id, title, description, publication, last_update, image_url, current_price, availability, category_category, language_language, teacher_id)
@@ -29,14 +29,22 @@ VALUES ('fff6e217-7851-4d8d-8cc7-73290d0f96ed', 'Marketing Digital', 'Aprende es
 INSERT INTO course (id, title, description, publication, last_update, image_url, current_price, availability, category_category, language_language, teacher_id)
 VALUES ('c0805b8c-1f4c-45c7-9776-bbcf6e1a1a7d', 'Desarrollo Web Full Stack', 'Conviertete en un desarrollador web completo.', '2023-06-20', '2023-07-15', 'imagen5.jpg', 149.00, true, 'Programación', 'English', 'usuario1');
 
-INSERT INTO role(name) VALUES ('ROLE_USER');
-INSERT INTO role(name) VALUES ('ROLE_MODERATOR');
+INSERT INTO lesson (title, description, duration, videourl, num_order, course_id)
+VALUES ('Principios de la IA', 'Lección introductoria a la IA.', 30, 'video_intro_IA.mp4', 1, 'd53b6f99-7f60-4a53-b801-6e4aa190bdcf');
+INSERT INTO lesson (title, description, duration, videourl, num_order, course_id)
+VALUES ('Intermedio de la IA', 'Lección de continuación a la IA.', 30, 'video_medio_IA2.mp4', 2, 'd53b6f99-7f60-4a53-b801-6e4aa190bdcf');
+INSERT INTO lesson (title, description, duration, videourl, num_order, course_id)
+VALUES ('Avanzada de la IA', 'Última lección de la IA.', 30, 'video_final_IA2.mp4', 3, 'd53b6f99-7f60-4a53-b801-6e4aa190bdcf');
+
+INSERT INTO role(name) VALUES ('ROLE_TEACHER');
+INSERT INTO role(name) VALUES ('ROLE_STUDENT');
 INSERT INTO role(name) VALUES ('ROLE_ADMIN');
 
-INSERT INTO user_security (email, username, password) VALUES('juan.perez@example.com', 'Juan',       '$2a$10$fVKfcc47q6lrNbeXangjYeY000dmjdjkdBxEOilqhapuTO5ZH0co2');
-INSERT INTO user_security (email, username, password) VALUES('maria.gonzalez@example.com', 'Maria',  '$2a$10$fVKfcc47q6lrNbeXangjYeY000dmjdjkdBxEOilqhapuTO5ZH0co2');
-INSERT INTO user_security (email, username, password) VALUES('carlos.sanchez@example.com', 'Carlos', '$2a$10$fVKfcc47q6lrNbeXangjYeY000dmjdjkdBxEOilqhapuTO5ZH0co2');
-INSERT INTO user_security (email, username, password) VALUES('admin@tecnocampus.cat', 'admin',       '$2a$10$fVKfcc47q6lrNbeXangjYeY000dmjdjkdBxEOilqhapuTO5ZH0co2');
+--password123
+INSERT INTO user_security (email, username, password) VALUES('juan.perez@example.com', 'usuario1', '$2a$10$fVKfcc47q6lrNbeXangjYeY000dmjdjkdBxEOilqhapuTO5ZH0co2');
+INSERT INTO user_security (email, username, password) VALUES('maria.gonzalez@example.com', 'usuario2', '$2a$10$fVKfcc47q6lrNbeXangjYeY000dmjdjkdBxEOilqhapuTO5ZH0co2');
+INSERT INTO user_security (email, username, password) VALUES('carlos.sanchez@example.com', 'usuario3', '$2a$10$fVKfcc47q6lrNbeXangjYeY000dmjdjkdBxEOilqhapuTO5ZH0co2');
+INSERT INTO user_security (email, username, password) VALUES('admin@tecnocampus.cat', 'admin', '$2a$10$fVKfcc47q6lrNbeXangjYeY000dmjdjkdBxEOilqhapuTO5ZH0co2');
 
 INSERT INTO user_roles (USER_ID, ROLE_ID) VALUES (1, 1);
 INSERT INTO user_roles (USER_ID, ROLE_ID) VALUES (2, 3);

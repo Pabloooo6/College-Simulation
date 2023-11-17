@@ -1,10 +1,7 @@
 package com.tecnocampus.grouppablo.domain;
 
 import com.tecnocampus.grouppablo.application.dto.UserDTO;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "userLab")
@@ -20,15 +17,6 @@ public class User {
     private String username;
 
     public User(){
-    }
-
-    public User(String name, String secondName, String thirdName, String email, String gender, String username){
-        this.name = name;
-        this.secondName = secondName;
-        this.thirdName = thirdName;
-        this.email = email;
-        this.gender = gender;
-        this.username = username;
     }
 
     public User(UserDTO userDTO) {

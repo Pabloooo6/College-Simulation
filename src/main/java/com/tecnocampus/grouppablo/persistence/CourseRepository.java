@@ -32,6 +32,6 @@ public interface CourseRepository extends JpaRepository <Course, String>{
     @Query("""
             SELECT NEW com.tecnocampus.grouppablo.application.dto.CourseDTO(c.title, c.description, c.publication, c.lastUpdate, c.imageUrl, c.currentPrice, c.availability, c.category, c.language, c.teacher)
             FROM Course c
-            WHERE c.teacher =:teacherName ORDER BY c.lastUpdate DESC""")
+            WHERE c.teacher.username =:teacherName ORDER BY c.lastUpdate DESC""")
     List<CourseDTO> findByTeacher(@Param("teacherName") String teacherName);
 }

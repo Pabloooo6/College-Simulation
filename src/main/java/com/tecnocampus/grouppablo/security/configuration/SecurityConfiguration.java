@@ -2,6 +2,7 @@ package com.tecnocampus.grouppablo.security.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -9,8 +10,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
@@ -39,22 +38,15 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-               // .headers(headers -> headers.frameOptions(frameOptions -> frameOptions
-               //         .sameOrigin()))
-               // .csrf(csrf -> csrf
-               //         .ignoringRequestMatchers(PathRequest.toH2Console()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req ->
-                        req.requestMatchers(WHITE_LIST_URL)
-                                .permitAll()
-                                .requestMatchers("/quotes/**").hasAnyRole("USER", "ADMIN")
-                                .requestMatchers("/profiles/me/**").hasRole("USER")
-                                .requestMatchers(POST, "/profiles").hasRole("ADMIN")
+                        req
+                                .requestMatchers(WHITE_LIST_URL).permitAll()
+                                .requestMatchers("/quotes/**").hasAnyRole("TEACHER", "ADMIN")
+                                .requestMatchers("/profiles/me/**").hasRole("STUDENT")
+                                .requestMatchers(HttpMethod.POST, "/profiles").hasRole("ADMIN")
                                 .requestMatchers("/profiles/**", "/profilesByName/**").hasRole("ADMIN")
-
-                                //.requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")).permitAll()
-                                .anyRequest()
-                                .authenticated()
+                                .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(authenticationProvider)

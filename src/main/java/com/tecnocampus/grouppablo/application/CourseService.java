@@ -1,25 +1,16 @@
 package com.tecnocampus.grouppablo.application;
 
-import com.tecnocampus.grouppablo.application.dto.CategoryDTO;
-import com.tecnocampus.grouppablo.application.dto.CourseDTO;
-import com.tecnocampus.grouppablo.application.dto.UserDTO;
-import com.tecnocampus.grouppablo.application.exception.CourseNotFound;
-import com.tecnocampus.grouppablo.application.exception.CourseAlreadyExists;
-import com.tecnocampus.grouppablo.application.exception.UserNotFound;
-import com.tecnocampus.grouppablo.domain.Category;
-import com.tecnocampus.grouppablo.domain.Course;
-import com.tecnocampus.grouppablo.domain.User;
-import com.tecnocampus.grouppablo.persistence.CategoryRepository;
-import com.tecnocampus.grouppablo.persistence.CourseRepository;
-import com.tecnocampus.grouppablo.persistence.UserRepository;
+import com.tecnocampus.grouppablo.application.dto.*;
+import com.tecnocampus.grouppablo.application.exception.*;
+import com.tecnocampus.grouppablo.domain.*;
+import com.tecnocampus.grouppablo.persistence.*;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.UUID;
+import java.util.stream.IntStream;
 
 @Service
 public class CourseService {
@@ -27,19 +18,28 @@ public class CourseService {
     private final CourseRepository courseRepository;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
+    private final LessonRepository lessonRepository;
+    private final EnrolRepository enrolRepository;
 
-    public CourseService(CourseRepository courseRepository, UserRepository userRepository, CategoryRepository categoryRepository){
+    public CourseService(CourseRepository courseRepository, UserRepository userRepository, CategoryRepository categoryRepository,
+                         EnrolRepository enrolRepository, LessonRepository lessonRepository){
         this.courseRepository = courseRepository;
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
+        this.lessonRepository = lessonRepository;
+        this.enrolRepository = enrolRepository;
     }
 
     public CourseDTO addCourse(@Valid CourseDTO courseDTO) {
-        if(courseRepository.findByTitle(courseDTO.getTitle()).isPresent()) throw new CourseAlreadyExists(courseDTO.getTitle());
+        if(courseRepository.existsById(courseDTO.getTitle())) throw new CourseAlreadyExists(courseDTO.getTitle());
         Course course = new Course(courseDTO);
+
         String id = UUID.randomUUID().toString();
         course.setId(id);
+        course.setTeacher(userRepository.findById(courseDTO.getTeacher().getUsername())
+                .orElseThrow(() -> new UserNotFound(courseDTO.getTeacher().getUsername())));
         course.setPublication(LocalDate.now());
+
         courseRepository.save(course);
         courseDTO.setId(id);
         return courseDTO;
@@ -64,6 +64,7 @@ public class CourseService {
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> new CourseNotFound(id));
 
+        if(course.getAvailability()) throw new NotModifiable(id);
         course.setTitle(courseDTO.getTitle());
         course.setDescription(courseDTO.getDescription());
         course.setImageUrl(courseDTO.getImageUrl());
@@ -75,7 +76,8 @@ public class CourseService {
     public CourseDTO updatePrice(CourseDTO courseDTO, String id){
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> new CourseNotFound(id));
-        
+
+        if(course.getAvailability()) throw new NotModifiable(id);
         course.setCurrentPrice(courseDTO.getCurrentPrice());
         course.setLastUpdate(LocalDate.now());
         return new CourseDTO(course);
@@ -86,6 +88,7 @@ public class CourseService {
         Course course = courseRepository.findById(id)
             .orElseThrow(() -> new CourseNotFound(id));
 
+        if(course.getLessons().isEmpty()) throw new NoLessonsInCourse(id);
         course.setAvailability(courseDTO.getAvailability());
         course.setLastUpdate(LocalDate.now());
         return new CourseDTO(course);
@@ -122,5 +125,98 @@ public class CourseService {
 
     public List<CourseDTO> getCoursesByTeacher(String teacherName){
         return courseRepository.findByTeacher(teacherName);
+    }
+
+    @Transactional
+    public LessonDTO addLesson(String id, @Valid LessonDTO lessonDTO){
+        Course course = courseRepository.findById(id)
+                .orElseThrow(() -> new CourseNotFound(id));
+
+        if(course.getAvailability()) throw new NotModifiable(id);
+        if(lessonRepository.existsById(lessonDTO.getTitle())) throw new LessonAlreadyExists(lessonDTO.getTitle());
+        if(course.getLessons().size() >= lessonDTO.getNumOrder()) throw new RuntimeException("The order of the lesson is not correct.");
+
+        Lesson newLesson = new Lesson(lessonDTO);
+        lessonRepository.save(newLesson);
+
+        List<Lesson> courseLessons = course.getLessons();
+        courseLessons.add(newLesson);
+        course.setLessons(courseLessons);
+        course.setLastUpdate(LocalDate.now());
+        return lessonDTO;
+    }
+
+    @Transactional
+    public List<LessonDTO> updateOrderOfLessons(String id, List<Integer> newOrder) {
+        Course course = courseRepository.findById(id)
+                .orElseThrow(() -> new CourseNotFound(id));
+
+        if(newOrder.size() != course.getLessons().size())
+            throw new RuntimeException("List of numbers is not of the correct size.");
+
+        IntStream.range(0, course.getLessons().size())
+                .forEach(index -> course.getLessons().get(index).setNumOrder(newOrder.get(index)));
+
+        List<Lesson> sortedLessons = course.getLessons().stream()
+                .sorted(Comparator.comparingInt(Lesson::getNumOrder))
+                .collect(Collectors.toList());
+
+        course.setLessons(sortedLessons);
+        courseRepository.save(course);
+
+        return sortedLessons.stream()
+                .map(LessonDTO::new)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public EnrolDTO updateUserCourses(String userId, String courseId){
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFound(userId));
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new CourseNotFound(courseId));
+
+        Enrol enrol = new Enrol(user, course);
+        if(enrolRepository.existsById(enrol.getEnrolId())) throw new EnrolAlreadyExists(userId, courseId);
+        enrolRepository.save(enrol);
+        return new EnrolDTO(enrol);
+    }
+
+    public EnrolDTO getCourseByStudent(String userId, String courseId){
+        Enrol enrol = enrolRepository.findById(new EnrolId(userId, courseId))
+                .orElseThrow(() -> new EnrolNotFound(userId, courseId));
+
+        List<Lesson> sortedLessons = enrol.getCourse().getLessons().stream()
+                .sorted(Comparator.comparingInt(Lesson::getNumOrder))
+                .toList();
+
+        enrol.getCourse().setLessons(sortedLessons);
+        return EnrolDTO.enrolDTODetails(enrol);
+    }
+
+    @Transactional
+    public EnrolDTO updateFinishedLesson(String userId, String courseId, int lessonOrder){
+        Enrol enrol = enrolRepository.findById(new EnrolId(userId, courseId))
+                .orElseThrow(() -> new EnrolNotFound(userId, courseId));
+
+        List<Lesson> courseLessons = enrol.getCourse().getLessons();
+        if (lessonOrder <= 0 || lessonOrder > courseLessons.size())
+            throw new RuntimeException("The lesson with index " + lessonOrder + " does not exist.");
+
+        List<Lesson> finishedLessons = enrol.getFinishedLessons();
+        Lesson currentLesson = courseLessons.get(lessonOrder - 1);
+
+        if (!finishedLessons.isEmpty()) {
+            if (finishedLessons.contains(currentLesson))
+                throw new RuntimeException("You have already finished that lesson.");
+            if (lessonOrder - 1 != finishedLessons.size())
+                throw new LessonsNotFinished(courseLessons.get(lessonOrder - 2).getTitle());
+        } else if (lessonOrder > 1) {
+            throw new LessonsNotFinished(courseLessons.get(lessonOrder - 2).getTitle());
+        }
+
+        finishedLessons.add(currentLesson);
+        enrol.setFinishedLessons(finishedLessons);
+        return new EnrolDTO(enrol);
     }
 }

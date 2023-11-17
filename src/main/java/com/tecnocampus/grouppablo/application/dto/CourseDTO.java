@@ -3,9 +3,13 @@ package com.tecnocampus.grouppablo.application.dto;
 import com.tecnocampus.grouppablo.domain.Category;
 import com.tecnocampus.grouppablo.domain.Course;
 import com.tecnocampus.grouppablo.domain.Language;
+import com.tecnocampus.grouppablo.domain.User;
 import jakarta.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class CourseDTO implements Serializable {
 
@@ -21,6 +25,7 @@ public class CourseDTO implements Serializable {
     private CategoryDTO categoryDTO;
     private LanguageDTO languageDTO;
     private UserDTO teacher;
+    private List<LessonDTO> lessonsDTO = new ArrayList<>();
 
     public CourseDTO(){
     }
@@ -32,7 +37,7 @@ public class CourseDTO implements Serializable {
     }
 
     public CourseDTO(String title, String description, LocalDate publication, LocalDate lastUpdate, String imageUrl,
-                     double currentPrice, boolean availability, Category category, Language language, UserDTO teacher){
+                     double currentPrice, boolean availability, Category category, Language language, User teacher){
         this.title = title;
         this.description = description;
         this.publication = publication;
@@ -42,7 +47,7 @@ public class CourseDTO implements Serializable {
         this.availability = availability;
         this.categoryDTO = new CategoryDTO(category);
         this.languageDTO = new LanguageDTO(language);
-        this.teacher = teacher;
+        this.teacher = new UserDTO(teacher);
     }
 
     public CourseDTO(String title, String description, LocalDate publication, LocalDate lastUpdate, String imageUrl,
@@ -70,6 +75,7 @@ public class CourseDTO implements Serializable {
         if(course.getLanguage() == null) this.languageDTO = new LanguageDTO("none");
         else this.languageDTO = new LanguageDTO(course.getLanguage());
         this.teacher = new UserDTO(course.getTeacher());
+        this.lessonsDTO = course.getLessons().stream().map(LessonDTO::new).collect(Collectors.toList());
     }
 
     public CourseDTO(String title, String description) {
@@ -109,4 +115,7 @@ public class CourseDTO implements Serializable {
 
     public void setTeacher(UserDTO teacher){this.teacher = teacher;}
     public UserDTO getTeacher(){return this.teacher;}
+
+    public List<LessonDTO> getLessonsDTO(){return this.lessonsDTO;}
+    public void setLessonsDTO(List<LessonDTO> lessonsDTO) {this.lessonsDTO = lessonsDTO;}
 }
