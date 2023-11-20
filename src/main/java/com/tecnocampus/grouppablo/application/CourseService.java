@@ -3,6 +3,8 @@ package com.tecnocampus.grouppablo.application;
 import com.tecnocampus.grouppablo.application.dto.*;
 import com.tecnocampus.grouppablo.application.exception.*;
 import com.tecnocampus.grouppablo.domain.*;
+import com.tecnocampus.grouppablo.domain.secutiry.Role;
+import com.tecnocampus.grouppablo.domain.secutiry.UserSecurity;
 import com.tecnocampus.grouppablo.persistence.*;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
@@ -20,14 +22,29 @@ public class CourseService {
     private final CategoryRepository categoryRepository;
     private final LessonRepository lessonRepository;
     private final EnrolRepository enrolRepository;
+    private final UserSecurityRepository userSecurityRepository;
+    private final RoleRepository roleRepository;
 
     public CourseService(CourseRepository courseRepository, UserRepository userRepository, CategoryRepository categoryRepository,
-                         EnrolRepository enrolRepository, LessonRepository lessonRepository){
+                         EnrolRepository enrolRepository, LessonRepository lessonRepository, UserSecurityRepository userSecurityRepository,
+                         RoleRepository roleRepository){
         this.courseRepository = courseRepository;
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
         this.lessonRepository = lessonRepository;
         this.enrolRepository = enrolRepository;
+        this.userSecurityRepository = userSecurityRepository;
+        this.roleRepository = roleRepository;
+    }
+
+    private List<CourseDTO> orderLessons(List<CourseDTO> courses){
+        courses.forEach(courseDTO -> {
+            List<LessonDTO> sortedLessons = courseDTO.getLessonsDTO().stream()
+                    .sorted(Comparator.comparingInt(LessonDTO::getNumOrder))
+                    .collect(Collectors.toList());
+            courseDTO.setLessonsDTO(sortedLessons);
+        });
+        return courses;
     }
 
     public CourseDTO addCourse(@Valid CourseDTO courseDTO) {
@@ -46,13 +63,20 @@ public class CourseService {
     }
 
     public List<CourseDTO> getAllCourses() {
-        return courseRepository.findByAvailabilityTrueOrderByTitle().stream().map(CourseDTO::new).collect(Collectors.toList());
+        return orderLessons(courseRepository.findByAvailabilityTrueOrderByTitle().stream().map(CourseDTO::new).collect(Collectors.toList()));
+    }
+
+    public List<CourseDTO> getAllCoursesUnregistered(){
+        return courseRepository.findAllCoursesUnregistered();
     }
 
     public CourseDTO getCourse(String id){
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> new CourseNotFound(id));
-        return new CourseDTO(course);
+
+        CourseDTO courseDTO = new CourseDTO(course);
+        courseDTO.getLessonsDTO().sort(Comparator.comparingInt(LessonDTO::getNumOrder));
+        return courseDTO;
     }
 
     public List<CourseDTO> getCoursesTitleOrDescription(String search) {
@@ -218,5 +242,27 @@ public class CourseService {
         finishedLessons.add(currentLesson);
         enrol.setFinishedLessons(finishedLessons);
         return new EnrolDTO(enrol);
+    }
+
+    @Transactional
+    public Set<Role> updateRoles(String username, Set<Role> roles){
+        UserSecurity userSecurity = userSecurityRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFound(username));
+
+        List<Role> newRoles = new ArrayList<>();
+        for(Role r : roles){
+            newRoles.add(roleRepository.findByName(r.getName()));
+        }
+
+        Set<Role> updatedRoles = userSecurity.getRoles();
+        for(Role r : updatedRoles) {
+            newRoles.remove(r);
+        }
+
+        if(!newRoles.isEmpty())
+            updatedRoles.addAll(newRoles);
+
+        userSecurity.setRoles(updatedRoles);
+        return updatedRoles;
     }
 }

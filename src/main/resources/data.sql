@@ -36,18 +36,18 @@ VALUES ('Intermedio de la IA', 'Lección de continuación a la IA.', 30, 'video_
 INSERT INTO lesson (title, description, duration, videourl, num_order, course_id)
 VALUES ('Avanzada de la IA', 'Última lección de la IA.', 30, 'video_final_IA2.mp4', 3, 'd53b6f99-7f60-4a53-b801-6e4aa190bdcf');
 
-INSERT INTO role(name) VALUES ('ROLE_TEACHER');
 INSERT INTO role(name) VALUES ('ROLE_STUDENT');
+INSERT INTO role(name) VALUES ('ROLE_TEACHER');
 INSERT INTO role(name) VALUES ('ROLE_ADMIN');
 
 --password123
 INSERT INTO user_security (email, username, password) VALUES('juan.perez@example.com', 'usuario1', '$2a$10$fVKfcc47q6lrNbeXangjYeY000dmjdjkdBxEOilqhapuTO5ZH0co2');
-INSERT INTO user_security (email, username, password) VALUES('maria.gonzalez@example.com', 'usuario2', '$2a$10$fVKfcc47q6lrNbeXangjYeY000dmjdjkdBxEOilqhapuTO5ZH0co2');
 INSERT INTO user_security (email, username, password) VALUES('carlos.sanchez@example.com', 'usuario3', '$2a$10$fVKfcc47q6lrNbeXangjYeY000dmjdjkdBxEOilqhapuTO5ZH0co2');
-INSERT INTO user_security (email, username, password) VALUES('admin@tecnocampus.cat', 'admin', '$2a$10$fVKfcc47q6lrNbeXangjYeY000dmjdjkdBxEOilqhapuTO5ZH0co2');
+INSERT INTO user_security (email, username, password) VALUES('isabel.fernandez@example.com', 'usuario4', '$2a$10$fVKfcc47q6lrNbeXangjYeY000dmjdjkdBxEOilqhapuTO5ZH0co2');
+INSERT INTO user_security (email, username, password) VALUES('admin@example.com', 'admin', '$2a$10$fVKfcc47q6lrNbeXangjYeY000dmjdjkdBxEOilqhapuTO5ZH0co2');
 
-INSERT INTO user_roles (USER_ID, ROLE_ID) VALUES (1, 1);
+INSERT INTO user_roles (USER_ID, ROLE_ID) VALUES (1, 2);
+INSERT INTO user_roles (USER_ID, ROLE_ID) VALUES (2, 2);
 INSERT INTO user_roles (USER_ID, ROLE_ID) VALUES (2, 3);
 INSERT INTO user_roles (USER_ID, ROLE_ID) VALUES (3, 1);
-INSERT INTO user_roles (USER_ID, ROLE_ID) VALUES (3, 3);
 INSERT INTO user_roles (USER_ID, ROLE_ID) VALUES (4, 3);

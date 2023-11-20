@@ -42,10 +42,21 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(req ->
                         req
                                 .requestMatchers(WHITE_LIST_URL).permitAll()
-                                .requestMatchers("/quotes/**").hasAnyRole("TEACHER", "ADMIN")
-                                .requestMatchers("/profiles/me/**").hasRole("STUDENT")
-                                .requestMatchers(HttpMethod.POST, "/profiles").hasRole("ADMIN")
-                                .requestMatchers("/profiles/**", "/profilesByName/**").hasRole("ADMIN")
+                                .requestMatchers("/coursesWithoutLessons").permitAll()
+
+                                .requestMatchers("/users/{id}/courses/{courseId}/lessons/{lesson}").hasAnyRole("STUDENT", "TEACHER", "ADMIN")
+                                .requestMatchers("/users/{id}/courses/{courseId}").hasAnyRole("STUDENT", "TEACHER", "ADMIN")
+                                .requestMatchers("/courses/searchByTitleOrDescription").hasAnyRole("STUDENT", "TEACHER", "ADMIN")
+                                .requestMatchers("/courses/searchByCategoryOrLanguage").hasAnyRole("STUDENT", "TEACHER", "ADMIN")
+
+                                .requestMatchers("/courses/searchByTeacher/{teacherName}").hasAnyRole("TEACHER", "ADMIN")
+                                .requestMatchers(HttpMethod.POST, "/courses").hasAnyRole("TEACHER", "ADMIN")
+                                .requestMatchers("/courses/{id}", "/courses/{id}/price").hasAnyRole("TEACHER", "ADMIN")
+                                .requestMatchers(HttpMethod.GET, "/courses/**").hasAnyRole("TEACHER", "ADMIN")
+
+                                .requestMatchers("/courses/{id}/availability", "/users/{username}/updateRoles").hasAnyRole( "ADMIN")
+                                //.requestMatchers("/courses", "/courses/**", "/users/**", "/category", "/category/**").hasAnyRole( "ADMIN")
+                                .requestMatchers("/**").hasAnyRole( "ADMIN")
                                 .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))

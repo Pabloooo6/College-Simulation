@@ -2,10 +2,12 @@ package com.tecnocampus.grouppablo.api;
 
 import com.tecnocampus.grouppablo.application.CourseService;
 import com.tecnocampus.grouppablo.application.dto.*;
+import com.tecnocampus.grouppablo.domain.secutiry.Role;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 public class CourseRestController {
@@ -27,6 +29,9 @@ public class CourseRestController {
         return courseService.getAllCourses();
     }
 
+    @GetMapping("/coursesWithoutLessons")
+    public List<CourseDTO> getCoursesUnregistered(){return courseService.getAllCoursesUnregistered();}
+
     @GetMapping("/courses/{id}")
     public CourseDTO getCourse(@PathVariable String id) { return courseService.getCourse(id); }
 
@@ -36,16 +41,19 @@ public class CourseRestController {
     }
 
     @PutMapping("/courses/{id}")
+    @ResponseStatus(HttpStatus.OK)
     public CourseDTO updateCourse(@RequestBody CourseDTO courseDTO, @PathVariable String id){
         return courseService.updateCourse(courseDTO, id);
     }
 
     @PatchMapping("/courses/{id}/price")
+    @ResponseStatus(HttpStatus.OK)
     public CourseDTO updatePrice(@RequestBody CourseDTO courseDTO, @PathVariable String id){
         return courseService.updatePrice(courseDTO, id);
     }
 
     @PatchMapping("/courses/{id}/availability")
+    @ResponseStatus(HttpStatus.OK)
     public CourseDTO updateAvailability(@RequestBody CourseDTO courseDTO, @PathVariable String id){
         return courseService.updateAvailability(courseDTO, id);
     }
@@ -69,22 +77,31 @@ public class CourseRestController {
         return courseService.getCoursesCategoryOrLanguage(categoryOrLanguage);
     }
 
+    /*@GetMapping("/myCourses")
+    public List<CourseDTO> getCoursesByTeacher(Principal principal){
+        return this.courseService.getCoursesByTeacher(principal.getName());
+        getName() devuelve el ID del usuario que esta login
+    }*/
+
     @GetMapping("/courses/searchByTeacher/{teacherName}")
     public List<CourseDTO> getCoursesByTeacher(@PathVariable String teacherName){
         return courseService.getCoursesByTeacher(teacherName);
     }
 
     @PostMapping("/courses/{id}/lessons")
+    @ResponseStatus(HttpStatus.CREATED)
     public LessonDTO addLesson(@PathVariable String id, @RequestBody @Valid LessonDTO lessonDTO){
         return this.courseService.addLesson(id, lessonDTO);
     }
 
     @PutMapping("/courses/{id}/lessons")
-    public List<LessonDTO> updateOrderOfLessons(@PathVariable String id, @RequestBody List<Integer> newOrder) throws Exception {
+    @ResponseStatus(HttpStatus.OK)
+    public List<LessonDTO> updateOrderOfLessons(@PathVariable String id, @RequestBody List<Integer> newOrder){
         return this.courseService.updateOrderOfLessons(id, newOrder);
     }
 
     @PutMapping("/users/{id}/courses/{courseId}")
+    @ResponseStatus(HttpStatus.OK)
     public EnrolDTO updateUserCourses(@PathVariable String id, @PathVariable String courseId){
         return this.courseService.updateUserCourses(id, courseId);
     }
@@ -95,7 +112,14 @@ public class CourseRestController {
     }
 
     @PutMapping("/users/{id}/courses/{courseId}/lessons/{lesson}")
+    @ResponseStatus(HttpStatus.OK)
     public EnrolDTO updateFinishedLesson(@PathVariable String id, @PathVariable String courseId, @PathVariable int lesson){
         return this.courseService.updateFinishedLesson(id, courseId, lesson);
+    }
+
+    @PutMapping("/users/{username}/updateRoles")
+    @ResponseStatus(HttpStatus.OK)
+    public Set<Role> updateRoles(@PathVariable String username, @RequestBody Set<Role> roles){
+        return this.courseService.updateRoles(username, roles);
     }
 }

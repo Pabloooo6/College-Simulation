@@ -7,14 +7,18 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface CourseRepository extends JpaRepository <Course, String>{
 
     List<Course> findByAvailabilityTrueOrderByTitle();
 
-    Optional<Course> findByTitle(String title);
+    @Query("""
+            SELECT NEW com.tecnocampus.grouppablo.application.dto.CourseDTO(c.title, c.description, c.publication, c.lastUpdate, c.imageUrl, c.currentPrice, c.availability, c.category, c.language, c.teacher)
+            FROM Course c
+            WHERE c.availability = TRUE
+            ORDER BY c.title ASC""")
+    List<CourseDTO> findAllCoursesUnregistered();
 
     @Query("""
             SELECT NEW com.tecnocampus.grouppablo.application.dto.CourseDTO(c.title, c.description)
