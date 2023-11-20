@@ -203,6 +203,10 @@ public class CourseService {
         Enrol enrol = new Enrol(user, course);
         if(enrolRepository.existsById(enrol.getEnrolId())) throw new EnrolAlreadyExists(userId, courseId);
         enrolRepository.save(enrol);
+
+        List<Lesson> lessons = course.getLessons();
+        lessons.sort(Comparator.comparingInt(Lesson::getNumOrder));
+        enrol.getCourse().setLessons(lessons);
         return new EnrolDTO(enrol);
     }
 
@@ -228,6 +232,7 @@ public class CourseService {
             throw new RuntimeException("The lesson with index " + lessonOrder + " does not exist.");
 
         List<Lesson> finishedLessons = enrol.getFinishedLessons();
+        courseLessons.sort(Comparator.comparingInt(Lesson::getNumOrder));
         Lesson currentLesson = courseLessons.get(lessonOrder - 1);
 
         if (!finishedLessons.isEmpty()) {
@@ -241,6 +246,7 @@ public class CourseService {
 
         finishedLessons.add(currentLesson);
         enrol.setFinishedLessons(finishedLessons);
+        enrol.getCourse().setLessons(courseLessons);
         return new EnrolDTO(enrol);
     }
 
