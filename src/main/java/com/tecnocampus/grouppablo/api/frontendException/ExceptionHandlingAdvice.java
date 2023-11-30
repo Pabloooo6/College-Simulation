@@ -30,7 +30,7 @@ public class ExceptionHandlingAdvice {
     String courseWithoutLesson(Exception exception) {
         return "There is any lesson in the course. Can not make it available.";}
 
-    @ExceptionHandler({LessonsNotFinished.class})
+    @ExceptionHandler({LessonsNotFinished.class, NotHalfOfLessonsDone.class})
     @ResponseBody
     @ResponseStatus(code = HttpStatus.CONFLICT, reason = "There is a lesson that must finish before.")
     String lessonsNotFinished(Exception exception) {return "There is a lesson that must finish before.";}

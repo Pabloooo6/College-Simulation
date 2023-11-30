@@ -1,9 +1,6 @@
 package com.tecnocampus.grouppablo.application.dto;
 
-import com.tecnocampus.grouppablo.domain.Category;
-import com.tecnocampus.grouppablo.domain.Course;
-import com.tecnocampus.grouppablo.domain.Language;
-import com.tecnocampus.grouppablo.domain.User;
+import com.tecnocampus.grouppablo.domain.*;
 import jakarta.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -26,6 +23,8 @@ public class CourseDTO implements Serializable {
     private LanguageDTO languageDTO;
     private UserDTO teacher;
     private List<LessonDTO> lessonsDTO = new ArrayList<>();
+    private List<ReviewDTO> reviewsDTO = new ArrayList<>();
+    private double satisfaction;
 
     public CourseDTO(){
     }
@@ -34,6 +33,38 @@ public class CourseDTO implements Serializable {
         this.title = title;
         this.description = description;
         this.imageUrl = imageUrl;
+    }
+
+    public CourseDTO(String title, String description, LocalDate publication, LocalDate lastUpdate, String imageUrl,
+                     double currentPrice, boolean availability, Category category, Language language, User teacher, List<ReviewDTO> reviewDTOS){
+        this.title = title;
+        this.description = description;
+        this.publication = publication;
+        this.lastUpdate = lastUpdate;
+        this.imageUrl = imageUrl;
+        this.currentPrice = currentPrice;
+        this.availability = availability;
+        this.categoryDTO = new CategoryDTO(category);
+        this.languageDTO = new LanguageDTO(language);
+        this.teacher = new UserDTO(teacher.getName());
+        this.reviewsDTO = reviewDTOS;
+    }
+
+    public CourseDTO(String title, String description, LocalDate publication, LocalDate lastUpdate, String imageUrl,
+                     double currentPrice, boolean availability, Category category, Language language, User teacher,
+                     List<ReviewDTO> reviewDTOS, double satisfaction){
+        this.title = title;
+        this.description = description;
+        this.publication = publication;
+        this.lastUpdate = lastUpdate;
+        this.imageUrl = imageUrl;
+        this.currentPrice = currentPrice;
+        this.availability = availability;
+        this.categoryDTO = new CategoryDTO(category);
+        this.languageDTO = new LanguageDTO(language);
+        this.teacher = new UserDTO(teacher.getName());
+        this.reviewsDTO = reviewDTOS;
+        this.satisfaction = satisfaction;
     }
 
     public CourseDTO(String title, String description, LocalDate publication, LocalDate lastUpdate, String imageUrl,
@@ -118,4 +149,10 @@ public class CourseDTO implements Serializable {
 
     public List<LessonDTO> getLessonsDTO(){return this.lessonsDTO;}
     public void setLessonsDTO(List<LessonDTO> lessonsDTO) {this.lessonsDTO = lessonsDTO;}
+
+    public List<ReviewDTO> getReviewsDTO() {return reviewsDTO;}
+    public void setReviewsDTO(List<ReviewDTO> reviewsDTO) {this.reviewsDTO = reviewsDTO;}
+
+    public double getSatisfaction(){return this.satisfaction;}
+    public void setSatisfaction(double satisfaction) {this.satisfaction = satisfaction;}
 }

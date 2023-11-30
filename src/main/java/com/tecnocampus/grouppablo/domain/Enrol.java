@@ -23,6 +23,9 @@ public class Enrol {
     private List<Lesson> finishedLessons = new ArrayList<>();
     private LocalDate date;
     private double price;
+    @OneToOne
+    @JoinColumn(name = "reviewId")
+    private Review review;
 
     public Enrol(){}
 
@@ -60,4 +63,7 @@ public class Enrol {
 
     public double getPrice(){return this.price;}
     public void setPrice(double price){this.price = price;}
+
+    public Review getReview() {return this.review;}
+    public void setReview(Review review) {this.review = review;}
 }

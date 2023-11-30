@@ -11,6 +11,7 @@ public class UserDTO implements Serializable {
     private String email;
     private String gender;
     private String username;
+    private double rating;
 
     public UserDTO(){
     }
@@ -33,6 +34,16 @@ public class UserDTO implements Serializable {
         this.username = user.getUsername();
     }
 
+    public UserDTO(String name){
+        this.name = name;
+    }
+
+    public UserDTO(String username, String name, double rating){
+        this.username = username;
+        this.name = name;
+        this.rating = rating;
+    }
+
     public void setName(String name){this.name = name;}
     public String getName(){return this.name;}
 
@@ -50,4 +61,7 @@ public class UserDTO implements Serializable {
 
     public void setUsername(String username){this.username = username;}
     public String getUsername(){return this.username;}
+
+    public void setRating(double rating){this.rating = rating;}
+    public double getRating() {return this.rating;}
 }

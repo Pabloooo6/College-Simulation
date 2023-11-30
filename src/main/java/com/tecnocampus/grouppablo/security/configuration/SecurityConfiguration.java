@@ -32,9 +32,6 @@ public class SecurityConfiguration {
         this.authenticationProvider = authenticationProvider;
     }
 
-    /* At this moment I'm not able to have the h2-console working with the security. So, I disabled the
-    console in the -h2-memory.properties file
-     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -42,20 +39,18 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(req ->
                         req
                                 .requestMatchers(WHITE_LIST_URL).permitAll()
-                                .requestMatchers("/coursesWithoutLessons").permitAll()
+                                .requestMatchers("/coursesWithoutLessons/**").permitAll()
 
-                                .requestMatchers("/users/{id}/courses/{courseId}/lessons/{lesson}").hasAnyRole("STUDENT", "TEACHER", "ADMIN")
-                                .requestMatchers("/users/{id}/courses/{courseId}").hasAnyRole("STUDENT", "TEACHER", "ADMIN")
+                                .requestMatchers("/users/{id}/courses/**").hasAnyRole("STUDENT", "TEACHER", "ADMIN")
+                                .requestMatchers("/users/{id}/finishedCourses").hasAnyRole("STUDENT", "TEACHER", "ADMIN")
                                 .requestMatchers("/courses/searchByTitleOrDescription").hasAnyRole("STUDENT", "TEACHER", "ADMIN")
                                 .requestMatchers("/courses/searchByCategoryOrLanguage").hasAnyRole("STUDENT", "TEACHER", "ADMIN")
 
-                                .requestMatchers("/courses/searchByTeacher/{teacherName}").hasAnyRole("TEACHER", "ADMIN")
                                 .requestMatchers(HttpMethod.POST, "/courses").hasAnyRole("TEACHER", "ADMIN")
-                                .requestMatchers("/courses/{id}", "/courses/{id}/price").hasAnyRole("TEACHER", "ADMIN")
                                 .requestMatchers(HttpMethod.GET, "/courses/**").hasAnyRole("TEACHER", "ADMIN")
+                                .requestMatchers("/courses/{id}").hasAnyRole("TEACHER", "ADMIN")
+                                .requestMatchers("/courses/searchByTeacher/{teacherName}").hasAnyRole("TEACHER", "ADMIN")
 
-                                .requestMatchers("/courses/{id}/availability", "/users/{username}/updateRoles").hasAnyRole( "ADMIN")
-                                //.requestMatchers("/courses", "/courses/**", "/users/**", "/category", "/category/**").hasAnyRole( "ADMIN")
                                 .requestMatchers("/**").hasAnyRole( "ADMIN")
                                 .anyRequest().authenticated()
                 )

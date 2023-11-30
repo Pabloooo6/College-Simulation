@@ -40,14 +40,43 @@ INSERT INTO role(name) VALUES ('ROLE_STUDENT');
 INSERT INTO role(name) VALUES ('ROLE_TEACHER');
 INSERT INTO role(name) VALUES ('ROLE_ADMIN');
 
---password123
-INSERT INTO user_security (email, username, password) VALUES('juan.perez@example.com', 'usuario1', '$2a$10$fVKfcc47q6lrNbeXangjYeY000dmjdjkdBxEOilqhapuTO5ZH0co2');
-INSERT INTO user_security (email, username, password) VALUES('carlos.sanchez@example.com', 'usuario3', '$2a$10$fVKfcc47q6lrNbeXangjYeY000dmjdjkdBxEOilqhapuTO5ZH0co2');
-INSERT INTO user_security (email, username, password) VALUES('isabel.fernandez@example.com', 'usuario4', '$2a$10$fVKfcc47q6lrNbeXangjYeY000dmjdjkdBxEOilqhapuTO5ZH0co2');
-INSERT INTO user_security (email, username, password) VALUES('admin@example.com', 'admin', '$2a$10$fVKfcc47q6lrNbeXangjYeY000dmjdjkdBxEOilqhapuTO5ZH0co2');
+INSERT INTO user_security (email, username, password)
+VALUES                                                          --password123
+    ('juan.perez@example.com', 'usuario1', '$2a$10$fVKfcc47q6lrNbeXangjYeY000dmjdjkdBxEOilqhapuTO5ZH0co2'),
+    ('maria.gonzalez@example.com', 'usuario2', '$2a$10$fVKfcc47q6lrNbeXangjYeY000dmjdjkdBxEOilqhapuTO5ZH0co2'),
+    ('carlos.sanchez@example.com', 'usuario3', '$2a$10$fVKfcc47q6lrNbeXangjYeY000dmjdjkdBxEOilqhapuTO5ZH0co2'),
+    ('isabel.fernandez@example.com', 'usuario4', '$2a$10$fVKfcc47q6lrNbeXangjYeY000dmjdjkdBxEOilqhapuTO5ZH0co2'),
+    ('manuel.lopez@example.com', 'usuario5', '$2a$10$fVKfcc47q6lrNbeXangjYeY000dmjdjkdBxEOilqhapuTO5ZH0co2'),
+    ('laura.ramirez@example.com', 'usuario6', '$2a$10$fVKfcc47q6lrNbeXangjYeY000dmjdjkdBxEOilqhapuTO5ZH0co2'),
+    ('pedro.diaz@example.com', 'usuario7', '$2a$10$fVKfcc47q6lrNbeXangjYeY000dmjdjkdBxEOilqhapuTO5ZH0co2'),
+    ('carmen.ruiz@example.com', 'usuario8', '$2a$10$fVKfcc47q6lrNbeXangjYeY000dmjdjkdBxEOilqhapuTO5ZH0co2'),
+    ('antonio.moreno@example.com', 'usuario9', '$2a$10$fVKfcc47q6lrNbeXangjYeY000dmjdjkdBxEOilqhapuTO5ZH0co2'),
+    ('sofia.torres@example.com', 'usuario10', '$2a$10$fVKfcc47q6lrNbeXangjYeY000dmjdjkdBxEOilqhapuTO5ZH0co2'),
+    ('admin@example.com', 'admin', '$2a$10$fVKfcc47q6lrNbeXangjYeY000dmjdjkdBxEOilqhapuTO5ZH0co2');
 
-INSERT INTO user_roles (USER_ID, ROLE_ID) VALUES (1, 2);
-INSERT INTO user_roles (USER_ID, ROLE_ID) VALUES (2, 2);
-INSERT INTO user_roles (USER_ID, ROLE_ID) VALUES (2, 3);
-INSERT INTO user_roles (USER_ID, ROLE_ID) VALUES (3, 1);
-INSERT INTO user_roles (USER_ID, ROLE_ID) VALUES (4, 3);
+INSERT INTO user_roles (USER_ID, ROLE_ID)
+VALUES
+    (1, 2), (2, 2), (3, 2),         --Teachers
+    (4, 1), (5, 1), (6, 1),         --Students
+    (7, 1), (8, 1), (9, 1), (10, 1),
+    (11, 3);                        --Admin
+
+INSERT INTO review (id, title, contents, satisfaction, date)
+VALUES
+    (101, 'Excelente Curso de Marketing Digital', 'Muy buen curso, aprendí mucho.', 4, CURRENT_DATE),
+    (102, 'Increíble curso de Diseño Gráfico Avanzado', 'El curso de Diseño Gráfico Avanzado superó mis expectativas.', 4, CURRENT_DATE),
+    (103, 'Desarrollo Web Full Stack', 'Buen contenido, pero podría mejorar en algunos aspectos.', 2, CURRENT_DATE),
+    (104, 'Marketing Digital', 'El curso de Marketing Digital es excelente, lo recomiendo.', 3, CURRENT_DATE),
+    (105, 'Curso Intermedio de Desarrollo Web Full Stack', 'Buen curso, aunque algunas secciones podrían ser más detalladas.', 1, CURRENT_DATE),
+    (106, 'Curso Avanzado de Diseño Gráfico', 'Me encantó el curso, muy bien explicado.', 5, CURRENT_DATE),
+    (107, 'Curso de Marketing Digital', 'Este curso de Machine Learning es excepcional.', 4, CURRENT_DATE);
+
+INSERT INTO enrol (user_username, course_id, date, price, review_id)
+VALUES
+    ('usuario5', 'fff6e217-7851-4d8d-8cc7-73290d0f96ed', CURRENT_DATE, 99.00, 101),
+    ('usuario5', '70e3ca87-9b86-4827-bc2c-daa8fe26a36f', CURRENT_DATE, 89.00, 102),
+    ('usuario6', 'c0805b8c-1f4c-45c7-9776-bbcf6e1a1a7d', CURRENT_DATE, 149.00, 103),
+    ('usuario7', 'fff6e217-7851-4d8d-8cc7-73290d0f96ed', CURRENT_DATE, 129.00, 104),
+    ('usuario8', 'c0805b8c-1f4c-45c7-9776-bbcf6e1a1a7d', CURRENT_DATE, 149.00, 105),
+    ('usuario9', '70e3ca87-9b86-4827-bc2c-daa8fe26a36f', CURRENT_DATE, 99.00, 106),
+    ('usuario10', 'fff6e217-7851-4d8d-8cc7-73290d0f96ed', CURRENT_DATE, 89.00, 107);

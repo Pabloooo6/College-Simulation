@@ -24,10 +24,11 @@ public class CourseService {
     private final EnrolRepository enrolRepository;
     private final UserSecurityRepository userSecurityRepository;
     private final RoleRepository roleRepository;
+    private final ReviewRepository reviewRepository;
 
     public CourseService(CourseRepository courseRepository, UserRepository userRepository, CategoryRepository categoryRepository,
                          EnrolRepository enrolRepository, LessonRepository lessonRepository, UserSecurityRepository userSecurityRepository,
-                         RoleRepository roleRepository){
+                         RoleRepository roleRepository, ReviewRepository reviewRepository){
         this.courseRepository = courseRepository;
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
@@ -35,6 +36,7 @@ public class CourseService {
         this.enrolRepository = enrolRepository;
         this.userSecurityRepository = userSecurityRepository;
         this.roleRepository = roleRepository;
+        this.reviewRepository = reviewRepository;
     }
 
     private List<CourseDTO> orderLessons(List<CourseDTO> courses){
@@ -67,7 +69,13 @@ public class CourseService {
     }
 
     public List<CourseDTO> getAllCoursesUnregistered(){
-        return courseRepository.findAllCoursesUnregistered();
+        List<Course> courses = courseRepository.findByAvailabilityTrueOrderByTitle();
+
+        return courses.stream().map(c -> new CourseDTO(
+                        c.getTitle(), c.getDescription(), c.getPublication(), c.getLastUpdate(),
+                        c.getImageUrl(), c.getCurrentPrice(), c.getAvailability(), c.getCategory(),
+                        c.getLanguage(), c.getTeacher(), enrolRepository.findReviewsByCourse(c.getId())))
+                .collect(Collectors.toList());
     }
 
     public CourseDTO getCourse(String id){
@@ -118,9 +126,9 @@ public class CourseService {
         return new CourseDTO(course);
     }
 
-    public UserDTO getUser(String username){
-        User user = userRepository.findById(username)
-                .orElseThrow(() -> new UserNotFound(username));
+    public UserDTO getUser(String id){
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFound(id));
         return new UserDTO(user);
     }
 
@@ -165,7 +173,6 @@ public class CourseService {
 
         List<Lesson> courseLessons = course.getLessons();
         courseLessons.add(newLesson);
-        course.setLessons(courseLessons);
         course.setLastUpdate(LocalDate.now());
         return lessonDTO;
     }
@@ -270,5 +277,145 @@ public class CourseService {
 
         userSecurity.setRoles(updatedRoles);
         return updatedRoles;
+    }
+
+    public List<CourseDTO> getAllCoursesByStudent(String id){
+        List<Enrol> enrols = enrolRepository.findByUserId(id);
+
+        return enrols.stream().map(e -> {
+                    CourseDTO courseDTO = new CourseDTO(e.getCourse());
+                    List<ReviewDTO> reviewDTOS = e.getReview() != null ?
+                            List.of(new ReviewDTO(e.getReview())) :
+                            List.of();
+                    courseDTO.setReviewsDTO(reviewDTOS);
+                    return courseDTO;})
+                .collect(Collectors.toList());
+    }
+
+    public List<CourseDTO> getAllFinishedCoursesByStudent(String id){
+        List<Enrol> enrols = enrolRepository.findByUserId(id);
+        List<CourseDTO> finishedCourses = new ArrayList<>();
+        for(Enrol e : enrols){
+            if(e.getFinishedLessons().size() == e.getCourse().getLessons().size()){
+                finishedCourses.add(new CourseDTO(e.getCourse()));
+            }
+        }
+        return finishedCourses;
+    }
+
+    @Transactional
+    public ReviewDTO addReview(String id, String courseId, ReviewDTO reviewDTO){
+        Enrol enrol = enrolRepository.findById(new EnrolId(id, courseId))
+                .orElseThrow(() -> new EnrolNotFound(id, courseId));
+
+        if(enrol.getFinishedLessons().size() < ((enrol.getCourse().getLessons().size() / 2) + (enrol.getCourse().getLessons().size() % 2)))
+            throw new NotHalfOfLessonsDone(id, courseId);
+
+        Review review = new Review(reviewDTO.getTitle(), reviewDTO.getContents(), reviewDTO.getSatisfaction());
+        enrol.setReview(review);
+
+        this.reviewRepository.save(review);
+        return new ReviewDTO(review);
+    }
+
+    public List<CourseDTO> getAllCoursesUnregisteredOrder(String order){
+        if(order.equalsIgnoreCase("creation"))
+            return getAllCoursesUnregistered().stream()
+                    .sorted(Comparator.comparing(CourseDTO::getPublication).reversed())
+                    .collect(Collectors.toList());
+        else if(order.equalsIgnoreCase("satisfaction")){
+            double average;
+            List<Course> courses = courseRepository.findByAvailabilityTrueOrderByTitle();
+            List<CourseDTO> coursesDTO = new ArrayList<>();
+
+            for (Course c : courses) {
+                average = enrolRepository.findSatisfactionsByCourse(c.getId()).stream()
+                        .mapToDouble(Integer::doubleValue)
+                        .average()
+                        .orElse(-1);
+
+                coursesDTO.add(new CourseDTO(c.getTitle(), c.getDescription(), c.getPublication(),
+                        c.getLastUpdate(), c.getImageUrl(), c.getCurrentPrice(), c.getAvailability(),
+                        c.getCategory(), c.getLanguage(), c.getTeacher(),
+                        enrolRepository.findReviewsByCourse(c.getId()), average));
+            }
+            return coursesDTO.stream()
+                    .sorted(Comparator.comparingDouble(CourseDTO::getSatisfaction).reversed())
+                    .collect(Collectors.toList());
+        }
+        else throw new RuntimeException("The parameter must be: Creation or Satisfaction");
+    }
+
+    public CourseDTO getCourseUnregistered(String id){
+        Course course = courseRepository.findById(id)
+                .orElseThrow(() -> new CourseNotFound(id));
+
+        return new CourseDTO(course.getTitle(), course.getDescription(), course.getPublication(),
+                course.getLastUpdate(), course.getImageUrl(), course.getCurrentPrice(), course.getAvailability(),
+                course.getCategory(), course.getLanguage(), course.getTeacher(), enrolRepository.findReviewsByCourse(id));
+    }
+
+    public List<UserDTO> getAllStudentsByCourse(String id, String courseId){
+        enrolRepository.findById(new EnrolId(id, courseId))
+                .orElseThrow(() -> new EnrolNotFound(id, courseId));
+
+        List<Enrol> enrols = enrolRepository.findByCourseId(courseId);
+        List<UserDTO> users = new ArrayList<>();
+        for(Enrol e : enrols){
+            if(e.getFinishedLessons().size() < e.getCourse().getLessons().size())
+                users.add(new UserDTO(e.getUser()));
+            else if (e.getDate().isAfter(LocalDate.now().minusMonths(2)))
+                users.add(new UserDTO(e.getUser()));
+        }
+        return users;
+    }
+
+    public List<UserDTO> getBestsTeachers(int num, int year){
+        List<UserDTO> teachers = courseRepository.findTeachers();
+        Set<String> uniqueTeacherUsernames = new HashSet<>();
+        List<UserDTO> uniqueTeachers = new ArrayList<>();
+
+        for (UserDTO teacher : teachers) {
+            if (uniqueTeacherUsernames.add(teacher.getUsername())) {
+                List<Integer> reviews = enrolRepository.findByTeacherIdAndYear(teacher.getUsername(), year);
+
+                teacher.setRating(reviews.stream()
+                        .mapToDouble(Integer::doubleValue)
+                        .average()
+                        .orElse(-1));
+
+                uniqueTeachers.add(teacher);
+            }
+        }
+        return uniqueTeachers.stream()
+                .sorted(Comparator.comparingDouble(UserDTO::getRating).reversed())
+                .limit(num)
+                .collect(Collectors.toList());
+    }
+
+    public List<UserDTO> getBestsStudents(int num){
+        List<Enrol> enrols = enrolRepository.findAll();
+        Set<UserDTO> usersRating = new HashSet<>();
+
+        for(Enrol e : enrols){
+            if(e.getCourse().getLessons().size() == e.getFinishedLessons().size()){
+                boolean present = false;
+                for(UserDTO u : usersRating){
+                    if(u.getUsername().equals(e.getUser().getUsername())){
+                        present = true;
+                        u.setRating(u.getRating() + 1);
+                    }
+                }
+                if(!present){
+                    UserDTO userDTO = new UserDTO(e.getUser());
+                    userDTO.setRating(+1);
+                    usersRating.add(userDTO);
+                }
+            }
+        }
+
+        List<UserDTO> sortedList = new ArrayList<>(usersRating);
+        sortedList.sort(Comparator.comparingDouble(UserDTO::getRating).reversed());
+        return sortedList.subList(0, Math.min(num, sortedList.size()));
     }
 }

@@ -15,6 +15,7 @@ public class EnrolDTO implements Serializable {
     private List<LessonDTO> finishedLessons = new ArrayList<>();
     private LocalDate date;
     private double price;
+    private ReviewDTO reviewDTO;
 
     public EnrolDTO(){}
 
@@ -51,4 +52,7 @@ public class EnrolDTO implements Serializable {
 
     public double getPrice() {return this.price;}
     public void setPrice(double price) {this.price = price;}
+
+    public ReviewDTO getReviewDTO(){return this.reviewDTO;}
+    public void setReviewDTO(ReviewDTO reviewDTO){this.reviewDTO = reviewDTO;}
 }

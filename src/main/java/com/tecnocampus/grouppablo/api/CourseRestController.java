@@ -58,8 +58,8 @@ public class CourseRestController {
         return courseService.updateAvailability(courseDTO, id);
     }
 
-    @GetMapping("/users/{username}")
-    public UserDTO getUser(@PathVariable String username){return courseService.getUser(username);}
+    @GetMapping("/users/{id}")
+    public UserDTO getUser(@PathVariable String id){return courseService.getUser(id);}
 
     @GetMapping("/category")
     public List<CategoryDTO> getCategories(){return courseService.getAllCategories();}
@@ -121,5 +121,46 @@ public class CourseRestController {
     @ResponseStatus(HttpStatus.OK)
     public Set<Role> updateRoles(@PathVariable String username, @RequestBody Set<Role> roles){
         return this.courseService.updateRoles(username, roles);
+    }
+
+    @GetMapping("/users/{id}/courses")
+    public List<CourseDTO> getAllCoursesByStudent(@PathVariable String id){
+        return this.courseService.getAllCoursesByStudent(id);
+    }
+
+    @GetMapping("/users/{id}/finishedCourses")
+    public List<CourseDTO> getAllFinishedCoursesByStudent(@PathVariable String id){
+        return this.courseService.getAllFinishedCoursesByStudent(id);
+    }
+
+    @PostMapping("/users/{id}/courses/{courseId}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ReviewDTO addReview(@PathVariable String id, @PathVariable String courseId, @RequestBody ReviewDTO reviewDTO){
+        return this.courseService.addReview(id, courseId, reviewDTO);
+    }
+
+    @GetMapping("/coursesWithoutLessons/order")
+    public List<CourseDTO> getAllCoursesUnregisteredOrder(@RequestParam String order){
+        return courseService.getAllCoursesUnregisteredOrder(order);
+    }
+
+    @GetMapping("/coursesWithoutLessons/{id}")
+    public CourseDTO getCourseUnregistered(@PathVariable String id){
+        return courseService.getCourseUnregistered(id);
+    }
+
+    @GetMapping("/users/{id}/courses/{courseId}/allStudents")
+    public List<UserDTO> getAllStudentsByCourse(@PathVariable String id, @PathVariable String courseId){
+        return this.courseService.getAllStudentsByCourse(id, courseId);
+    }
+
+    @GetMapping("/bestTeachers/{num}/{year}")
+    public List<UserDTO> getBestsTeachers(@PathVariable int num, @PathVariable int year){
+        return this.courseService.getBestsTeachers(num, year);
+    }
+
+    @GetMapping("/users/bestsStudents/{num}")
+    public List<UserDTO> getBestsStudents(@PathVariable int num){
+        return this.courseService.getBestsStudents(num);
     }
 }
