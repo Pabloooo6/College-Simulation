@@ -6,6 +6,7 @@ import com.tecnocampus.grouppablo.domain.secutiry.Role;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import java.security.Principal;
 import java.util.List;
 import java.util.Set;
 
@@ -162,5 +163,37 @@ public class CourseRestController {
     @GetMapping("/users/bestsStudents/{num}")
     public List<UserDTO> getBestsStudents(@PathVariable int num){
         return this.courseService.getBestsStudents(num);
+    }
+
+    @PostMapping("/users/messages/{receiver}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public MessageDTO sendMessage(Principal principal, @PathVariable String receiver, @RequestBody @Valid MessageDTO messageDTO) {
+        return this.courseService.addMessage(principal.getName(), receiver, messageDTO);
+    }
+
+    @GetMapping("/users/messages/send")
+    public List<MessageDTO> getAllSendMessages(Principal principal) {
+        return this.courseService.getAllSendMessages(principal.getName());
+    }
+
+    @GetMapping("/users/messages/received")
+    public List<MessageDTO> getAllReceivedMessages(Principal principal){
+        return this.courseService.getAllReceivedMessages(principal.getName());
+    }
+
+    @GetMapping("/users/messages/received/read")
+    public List<MessageDTO> getReadOrNotMessages(Principal principal, @RequestParam String read){
+        return this.courseService.getReadOrNotMessages(principal.getName(), read);
+    }
+
+    @GetMapping("/users/messages/{userId}")
+    public List<MessageDTO> getConversation(Principal principal, @PathVariable String userId) {
+        return this.courseService.getConversation(principal.getName(), userId);
+    }
+
+    @PatchMapping("/users/messages/{messageId}/read")
+    @ResponseStatus(HttpStatus.OK)
+    public boolean markMessageAsRead(Principal principal, @PathVariable String messageId) {
+        return this.courseService.markMessageAsRead(principal.getName(), messageId);
     }
 }

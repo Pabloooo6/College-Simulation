@@ -80,3 +80,26 @@ VALUES
     ('usuario8', 'c0805b8c-1f4c-45c7-9776-bbcf6e1a1a7d', CURRENT_DATE, 149.00, 105),
     ('usuario9', '70e3ca87-9b86-4827-bc2c-daa8fe26a36f', CURRENT_DATE, 99.00, 106),
     ('usuario10', 'fff6e217-7851-4d8d-8cc7-73290d0f96ed', CURRENT_DATE, 89.00, 107);
+
+INSERT INTO message (id, title, body, date, read, sender_id, receiver_id)
+VALUES
+    ('1', 'Saludo Inicial', 'Hola estudiante, bienvenido al curso.', '2023-11-25', false, 'usuario1', 'usuario4'),
+    ('2', 'Duda sobre Tema', 'Profesor, ¿podría explicar nuevamente la lección sobre Java?', '2023-11-25', false, 'usuario5', 'usuario2'),
+    ('3', 'Recordatorio de Tarea', 'Recuerda completar la tarea antes del viernes.', '2023-11-25', true, 'usuario3', 'usuario6'),
+    ('4', 'Trabajo en Grupo', 'Hola compañero, ¿podemos colaborar en el proyecto?', '2023-11-25', false, 'usuario7', 'usuario8'),
+    ('5', 'Consulta sobre Proyecto', 'Profesor, tengo dudas sobre el proyecto final. ¿Podemos hablar al respecto?', '2023-11-25', false, 'usuario9', 'usuario1'),
+    ('6', 'Feedback de Examen', 'Estudiante, excelente trabajo en el último examen. ¡Felicidades!', '2023-11-25', false, 'usuario2', 'usuario10'),
+    ('7', 'Colaboración en Proyecto', 'Hola compañero, ¿puedes ayudarme con el proyecto?', '2023-11-25', false, 'usuario4', 'usuario5'),
+    ('8', 'Recordatorio de Tarea', 'Estimado estudiante, recuerda revisar la tarea antes de la fecha límite.', '2023-11-25', false, 'usuario1', 'usuario6'),
+    ('9', 'Consulta sobre Proyecto', 'Profesor, ¿puede proporcionar más detalles sobre el próximo proyecto?', '2023-11-25', false, 'usuario7', 'usuario2'),
+    ('10', 'Oferta de Ayuda para Examen', '¡Hola estudiante! ¿Necesitas ayuda con la preparación del examen?', '2023-11-26', false, 'usuario3', 'usuario9'),
+    ('11', 'Consulta sobre Laboratorio', 'Profesor, ¿podría aclarar las instrucciones del próximo laboratorio?', '2023-11-26', false, 'usuario4', 'usuario1'),
+    ('12', 'Colaboración en Proyecto', 'Hola compañero, estoy interesado en colaborar contigo en el proyecto de Android.', '2023-11-26', false, 'usuario6', 'usuario8'),
+    ('13', 'Solicitud de Tutoría', 'Profesor, ¿podría programar una tutoría para discutir mis dudas en el tema de bases de datos?', '2023-11-26', false, 'usuario5', 'usuario3'),
+    ('14', 'Recordatorio de Examen', 'Estudiantes, recuerden que el examen final se llevará a cabo el próximo martes.', '2023-11-27', false, 'usuario1', 'usuario9'),
+    ('15', 'Consulta sobre Proyecto', 'Profesor, ¿hay algún requisito específico para el proyecto que debemos tener en cuenta?', '2023-11-27', false, 'usuario9', 'usuario3'),
+    ('16', 'Feedback de Tarea', 'Estudiante, buen trabajo en la tarea. Sigue así.', '2023-11-27', false, 'usuario1', 'usuario10'),
+    ('17', 'Colaboración en Investigación', 'Hola compañeros, ¿alguien está interesado en formar un grupo de investigación?', '2023-11-27', false, 'usuario4', 'usuario6'),
+    ('18', 'Consulta sobre Tema', 'Profesor, tengo dudas sobre el concepto de herencia en programación. ¿Podría proporcionar más ejemplos?', '2023-11-28', false, 'usuario5', 'usuario2'),
+    ('19', 'Recordatorio de Entrega', 'Estudiantes, recuerden que la entrega del proyecto es el próximo viernes. ¡Prepárense!', '2023-11-28', false, 'usuario1', 'usuario8'),
+    ('20', 'Felicitaciones por Presentación', 'Estudiantes, excelente presentación en clase. ¡Enhorabuena!', '2023-11-28', false, 'usuario3', 'usuario7');

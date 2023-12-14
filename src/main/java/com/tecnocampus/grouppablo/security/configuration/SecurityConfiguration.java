@@ -41,6 +41,7 @@ public class SecurityConfiguration {
                                 .requestMatchers(WHITE_LIST_URL).permitAll()
                                 .requestMatchers("/coursesWithoutLessons/**").permitAll()
 
+                                .requestMatchers("/users/messages/**").hasAnyRole("STUDENT", "TEACHER", "ADMIN")
                                 .requestMatchers("/users/{id}/courses/**").hasAnyRole("STUDENT", "TEACHER", "ADMIN")
                                 .requestMatchers("/users/{id}/finishedCourses").hasAnyRole("STUDENT", "TEACHER", "ADMIN")
                                 .requestMatchers("/courses/searchByTitleOrDescription").hasAnyRole("STUDENT", "TEACHER", "ADMIN")

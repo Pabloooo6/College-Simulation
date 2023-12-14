@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ControllerAdvice
 public class ExceptionHandlingAdvice {
 
-    @ExceptionHandler({CourseNotFound.class, UserNotFound.class, EnrolNotFound.class})
+    @ExceptionHandler({CourseNotFound.class, UserNotFound.class, EnrolNotFound.class, MessageNotFound.class})
     @ResponseStatus(code = HttpStatus.NOT_FOUND, reason = "Object not found")
     @ResponseBody
     String objectNotFoundHandler(Exception ex) {
@@ -27,8 +27,7 @@ public class ExceptionHandlingAdvice {
     @ExceptionHandler({NoLessonsInCourse.class})
     @ResponseBody
     @ResponseStatus(code = HttpStatus.CONFLICT, reason = "There is any lesson in the course. Can not make it available.")
-    String courseWithoutLesson(Exception exception) {
-        return "There is any lesson in the course. Can not make it available.";}
+    String courseWithoutLesson(Exception exception) {return "There is any lesson in the course. Can not make it available.";}
 
     @ExceptionHandler({LessonsNotFinished.class, NotHalfOfLessonsDone.class})
     @ResponseBody

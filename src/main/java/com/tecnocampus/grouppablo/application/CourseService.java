@@ -25,10 +25,11 @@ public class CourseService {
     private final UserSecurityRepository userSecurityRepository;
     private final RoleRepository roleRepository;
     private final ReviewRepository reviewRepository;
+    private final MessageRepository messageRepository;
 
     public CourseService(CourseRepository courseRepository, UserRepository userRepository, CategoryRepository categoryRepository,
                          EnrolRepository enrolRepository, LessonRepository lessonRepository, UserSecurityRepository userSecurityRepository,
-                         RoleRepository roleRepository, ReviewRepository reviewRepository){
+                         RoleRepository roleRepository, ReviewRepository reviewRepository, MessageRepository messageRepository){
         this.courseRepository = courseRepository;
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
@@ -37,6 +38,7 @@ public class CourseService {
         this.userSecurityRepository = userSecurityRepository;
         this.roleRepository = roleRepository;
         this.reviewRepository = reviewRepository;
+        this.messageRepository = messageRepository;
     }
 
     private List<CourseDTO> orderLessons(List<CourseDTO> courses){
@@ -417,5 +419,45 @@ public class CourseService {
         List<UserDTO> sortedList = new ArrayList<>(usersRating);
         sortedList.sort(Comparator.comparingDouble(UserDTO::getRating).reversed());
         return sortedList.subList(0, Math.min(num, sortedList.size()));
+    }
+
+
+    public MessageDTO addMessage(String id, String receiver, MessageDTO messageDTO) {
+        Message message = new Message(messageDTO.getTitle(), messageDTO.getBody());
+
+        message.setSender(userRepository.findById(id).orElseThrow(() -> new UserNotFound(id)));
+        message.setReceiver(userRepository.findById(receiver).orElseThrow(() -> new UserNotFound(receiver)));
+
+        messageRepository.save(message);
+        return new MessageDTO(message);
+    }
+
+    public List<MessageDTO> getAllSendMessages(String id) {
+        return messageRepository.findBySender(id);
+    }
+
+    public List<MessageDTO> getAllReceivedMessages(String id){
+        return messageRepository.findByReceiver(id);
+    }
+
+    public List<MessageDTO> getReadOrNotMessages(String id, String read) {
+        if(read.equalsIgnoreCase("true") || read.equalsIgnoreCase("false"))
+            return messageRepository.findByRead(id, Boolean.parseBoolean(read));
+
+        throw new RuntimeException("Parameter 'read' is not correct. It must be 'true' or 'false");
+    }
+
+    public List<MessageDTO> getConversation(String id, String userId) {
+        return messageRepository.findBySenderAndReceiver(id, userId);
+    }
+
+    @Transactional
+    public boolean markMessageAsRead(String id, String messageId) {
+        Message message = messageRepository.findById(messageId).orElseThrow(() -> new MessageNotFound(messageId));
+        if(message.getReceiver().getUsername().equalsIgnoreCase(id)){
+            message.setRead(true);
+            return true;
+        }
+        throw new MessageNotFound(messageId);
     }
 }
