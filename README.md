@@ -1,4 +1,4 @@
-# College Simulation
+# College Simulation ![status](https://img.shields.io/badge/Status-Finished-red.svg)
 
 It is a project done in the college that shows a backend simulation of the basic functionalities of a college.
 
